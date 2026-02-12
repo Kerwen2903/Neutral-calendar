@@ -1,0 +1,38 @@
+{
+  "appTitle": "Bitarap Senenama",
+  "normalCalendar": "Adaty Senenama",
+  "neutralCalendar": "Bitarap Senenama",
+  "comparison": "Deňeşdirmek",
+  "converter": "Öwürmek",
+  "settings": "Sazlamalar",
+  "language": "Dil",
+  "turkmen": "Türkmen",
+  "russian": "Русский",
+  
+  "january": "Ýanwar",
+  "february": "Fewral",
+  "march": "Mart",
+  "april": "Aprel",
+  "may": "Maý",
+  "june": "Iýun",
+  "july": "Iýul",
+  "august": "Awgust",
+  "september": "Sentýabr",
+  "october": "Oktýabr",
+  "november": "Noýabr",
+  "december": "Dekabr",
+  
+  "monday": "Duş",
+  "tuesday": "Siş",
+  "wednesday": "Çar",
+  "thursday": "Pen",
+  "friday": "Ann",
+  "saturday": "Şen",
+  "sunday": "Ýek",
+  
+  "convertDate": "Senäni öwürmek",
+  "selectDate": "Senäni saýla",
+  "today": "Şu gün",
+  "leapYear": "Artykmaç ýyl",
+  "specialDay": "Aýratyn gün"
+}

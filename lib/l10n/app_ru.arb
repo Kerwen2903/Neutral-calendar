@@ -1,0 +1,38 @@
+{
+  "appTitle": "Нейтральный Календарь",
+  "normalCalendar": "Обычный Календарь",
+  "neutralCalendar": "Нейтральный Календарь",
+  "comparison": "Сравнение",
+  "converter": "Конвертер",
+  "settings": "Настройки",
+  "language": "Язык",
+  "turkmen": "Türkmen",
+  "russian": "Русский",
+  
+  "january": "Январь",
+  "february": "Февраль",
+  "march": "Март",
+  "april": "Апрель",
+  "may": "Май",
+  "june": "Июнь",
+  "july": "Июль",
+  "august": "Август",
+  "september": "Сентябрь",
+  "october": "Октябрь",
+  "november": "Ноябрь",
+  "december": "Декабрь",
+  
+  "monday": "Пн",
+  "tuesday": "Вт",
+  "wednesday": "Ср",
+  "thursday": "Чт",
+  "friday": "Пт",
+  "saturday": "Сб",
+  "sunday": "Вс",
+  
+  "convertDate": "Конвертировать дату",
+  "selectDate": "Выбрать дату",
+  "today": "Сегодня",
+  "leapYear": "Високосный год",
+  "specialDay": "Особый день"
+}

@@ -1,0 +1,70 @@
+Resolving dependencies...
+Downloading packages...
+  characters 1.4.0 (1.4.1 available)
+  flutter_lints 5.0.0 (6.0.0 available)
+  lints 5.1.1 (6.0.0 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.16.0 (1.17.0 available)
+  test_api 0.7.6 (0.7.8 available)
+Got dependencies!
+7 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing e-library...                                          
+
+warning - Unused import: 'app_text_styles.dart' - lib\core\theme\app_theme.dart:3:8 - unused_import
+  error - The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.  - lib\core\theme\app_theme.dart:24:18 - argument_type_not_assignable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\book_details\book_details_screen.dart:161:48 - deprecated_member_use
+warning - The declaration '<unnamed>' isn't referenced - lib\screens\home\home_screen.dart:1:1 - unused_element
+warning - Unused import: '../../core/theme/app_colors.dart' - lib\screens\home\home_screen.dart:2:8 - unused_import
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:3:23 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:3:24 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:4:21 - expected_executable
+  error - Unexpected text ';' - lib\screens\home\home_screen.dart:4:22 - unexpected_token
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:5:19 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:5:20 - expected_executable
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:6:19 - prefer_typing_uninitialized_variables
+  error - Expected to find ';' - lib\screens\home\home_screen.dart:6:19 - expected_token
+  error - Variables must be declared using the keywords 'const', 'final', 'var' or a type name - lib\screens\home\home_screen.dart:6:19 - missing_const_final_var_or_type
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:6:29 - expected_executable
+  error - Functions must have an explicit list of parameters - lib\screens\home\home_screen.dart:6:31 - missing_function_parameters
+  error - A function body must be provided - lib\screens\home\home_screen.dart:6:45 - missing_function_body
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:6:45 - expected_executable
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:6:46 - prefer_typing_uninitialized_variables
+  error - Variables must be declared using the keywords 'const', 'final', 'var' or a type name - lib\screens\home\home_screen.dart:6:46 - missing_const_final_var_or_type
+  error - Expected an identifier - lib\screens\home\home_screen.dart:7:17 - missing_identifier
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:7:18 - prefer_typing_uninitialized_variables
+  error - Expected an identifier - lib\screens\home\home_screen.dart:8:15 - missing_identifier
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:8:16 - prefer_typing_uninitialized_variables
+  error - Expected an identifier - lib\screens\home\home_screen.dart:9:13 - missing_identifier
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:9:14 - prefer_typing_uninitialized_variables
+  error - Expected to find ';' - lib\screens\home\home_screen.dart:9:14 - expected_token
+   info - An uninitialized variable should have an explicit type annotation - lib\screens\home\home_screen.dart:10:13 - prefer_typing_uninitialized_variables
+  error - Can't have modifier 'const' here - lib\screens\home\home_screen.dart:10:13 - extraneous_modifier
+  error - Expected an identifier - lib\screens\home\home_screen.dart:10:13 - missing_identifier
+   info - The variable name 'SliverToBoxAdapter' isn't a lowerCamelCase identifier - lib\screens\home\home_screen.dart:10:19 - non_constant_identifier_names
+  error - Named parameters must be enclosed in curly braces ('{' and '}') - lib\screens\home\home_screen.dart:10:43 - named_parameter_outside_group
+  error - Using a colon as the separator before a default value is no longer supported - lib\screens\home\home_screen.dart:10:43 - obsolete_colon_for_default_value
+  error - The default value of an optional parameter must be constant - lib\screens\home\home_screen.dart:10:45 - non_constant_default_value
+  error - A function body must be provided - lib\screens\home\home_screen.dart:10:66 - missing_function_body
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:10:66 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:11:11 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:11:12 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:12:9 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:12:10 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:13:7 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:13:8 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:14:5 - expected_executable
+  error - Unexpected text ';' - lib\screens\home\home_screen.dart:14:6 - unexpected_token
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:15:3 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\screens\home\home_screen.dart:16:1 - expected_executable
+warning - Unused import: 'home/home_screen.dart' - lib\screens\main_navigation.dart:3:8 - unused_import
+  error - The method 'HomeScreen' isn't defined for the type '_MainNavigationState' - lib\screens\main_navigation.dart:19:5 - undefined_method
+  error - The values in a const list literal must be constants - lib\screens\main_navigation.dart:19:5 - non_constant_list_element
+warning - Unused import: '../../widgets/book_card.dart' - lib\screens\search\search_screen.dart:5:8 - unused_import
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\settings\settings_screen.dart:47:19 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\settings\settings_screen.dart:56:19 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\continue_reading_card.dart:66:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\continue_reading_card.dart:86:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\review_card.dart:83:41 - deprecated_member_use
+
