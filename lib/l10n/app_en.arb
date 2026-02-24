@@ -1,5 +1,7 @@
 {
+  "@@locale": "en",
   "appTitle": "Neutral Calendar",
+  "calendar": "Calendar",
   "normalCalendar": "Normal Calendar",
   "neutralCalendar": "Neutral Calendar",
   "comparison": "Comparison",
@@ -8,7 +10,6 @@
   "language": "Language",
   "turkmen": "Türkmen",
   "russian": "Русский",
-  
   "january": "January",
   "february": "February",
   "march": "March",
@@ -21,7 +22,18 @@
   "october": "October",
   "november": "November",
   "december": "December",
-  
+  "adam": "Adam",
+  "eve": "Eve",
+  "noah": "Noah",
+  "abraham": "Abraham",
+  "moses": "Moses",
+  "icon": "Icon",
+  "ilham": "Ilham",
+  "avesta": "Avesta",
+  "shinto": "Shinto",
+  "aqdas": "Aqdas",
+  "nirvana": "Nirvana",
+  "dharma": "Dharma",
   "monday": "Mon",
   "tuesday": "Tue",
   "wednesday": "Wed",
@@ -29,10 +41,18 @@
   "friday": "Fri",
   "saturday": "Sat",
   "sunday": "Sun",
-  
   "convertDate": "Convert Date",
   "selectDate": "Select Date",
   "today": "Today",
   "leapYear": "Leap Year",
-  "specialDay": "Special Day"
+  "specialDay": "Special Day",
+  "from": "From",
+  "aboutCalendar": "About Neutral Calendar",
+  "howToUse": "How to use",
+  "monthNames": "Month Names",
+  "gregorianMonths": "Gregorian",
+  "neutralMonths": "Neutral",
+  "darkMode": "Dark Mode",
+  "darkModeOn": "Dark",
+  "lightModeOn": "Light"
 }

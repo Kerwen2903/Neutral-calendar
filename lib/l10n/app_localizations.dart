@@ -64,7 +64,7 @@ import 'app_localizations_tk.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -87,17 +87,17 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('ru'),
-    Locale('tk'),
+    Locale('tk')
   ];
 
   /// No description provided for @appTitle.
@@ -105,6 +105,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Neutral Calendar'**
   String get appTitle;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
 
   /// No description provided for @normalCalendar.
   ///
@@ -226,6 +232,78 @@ abstract class AppLocalizations {
   /// **'December'**
   String get december;
 
+  /// No description provided for @adam.
+  ///
+  /// In en, this message translates to:
+  /// **'Adam'**
+  String get adam;
+
+  /// No description provided for @eve.
+  ///
+  /// In en, this message translates to:
+  /// **'Eve'**
+  String get eve;
+
+  /// No description provided for @noah.
+  ///
+  /// In en, this message translates to:
+  /// **'Noah'**
+  String get noah;
+
+  /// No description provided for @abraham.
+  ///
+  /// In en, this message translates to:
+  /// **'Abraham'**
+  String get abraham;
+
+  /// No description provided for @moses.
+  ///
+  /// In en, this message translates to:
+  /// **'Moses'**
+  String get moses;
+
+  /// No description provided for @icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get icon;
+
+  /// No description provided for @ilham.
+  ///
+  /// In en, this message translates to:
+  /// **'Ilham'**
+  String get ilham;
+
+  /// No description provided for @avesta.
+  ///
+  /// In en, this message translates to:
+  /// **'Avesta'**
+  String get avesta;
+
+  /// No description provided for @shinto.
+  ///
+  /// In en, this message translates to:
+  /// **'Shinto'**
+  String get shinto;
+
+  /// No description provided for @aqdas.
+  ///
+  /// In en, this message translates to:
+  /// **'Aqdas'**
+  String get aqdas;
+
+  /// No description provided for @nirvana.
+  ///
+  /// In en, this message translates to:
+  /// **'Nirvana'**
+  String get nirvana;
+
+  /// No description provided for @dharma.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma'**
+  String get dharma;
+
   /// No description provided for @monday.
   ///
   /// In en, this message translates to:
@@ -297,6 +375,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Special Day'**
   String get specialDay;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @aboutCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'About Neutral Calendar'**
+  String get aboutCalendar;
+
+  /// No description provided for @howToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get howToUse;
+
+  /// No description provided for @monthNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Month Names'**
+  String get monthNames;
+
+  /// No description provided for @gregorianMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian'**
+  String get gregorianMonths;
+
+  /// No description provided for @neutralMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get neutralMonths;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @darkModeOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkModeOn;
+
+  /// No description provided for @lightModeOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightModeOn;
 }
 
 class _AppLocalizationsDelegate
@@ -328,9 +460,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

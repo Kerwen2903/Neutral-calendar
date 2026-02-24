@@ -1,5 +1,7 @@
 {
+  "@@locale": "ru",
   "appTitle": "Нейтральный Календарь",
+  "calendar": "Календарь",
   "normalCalendar": "Обычный Календарь",
   "neutralCalendar": "Нейтральный Календарь",
   "comparison": "Сравнение",
@@ -8,7 +10,6 @@
   "language": "Язык",
   "turkmen": "Türkmen",
   "russian": "Русский",
-  
   "january": "Январь",
   "february": "Февраль",
   "march": "Март",
@@ -21,7 +22,18 @@
   "october": "Октябрь",
   "november": "Ноябрь",
   "december": "Декабрь",
-  
+  "adam": "Адам",
+  "eve": "Ева",
+  "noah": "Ной",
+  "abraham": "Авраам",
+  "moses": "Моисей",
+  "icon": "Икона",
+  "ilham": "Ильхам",
+  "avesta": "Авеста",
+  "shinto": "Синто",
+  "aqdas": "Акдас",
+  "nirvana": "Нирвана",
+  "dharma": "Дхарма",
   "monday": "Пн",
   "tuesday": "Вт",
   "wednesday": "Ср",
@@ -29,10 +41,18 @@
   "friday": "Пт",
   "saturday": "Сб",
   "sunday": "Вс",
-  
   "convertDate": "Конвертировать дату",
   "selectDate": "Выбрать дату",
   "today": "Сегодня",
   "leapYear": "Високосный год",
-  "specialDay": "Особый день"
+  "specialDay": "Особый день",
+  "from": "От",
+  "aboutCalendar": "О Нейтральном Календаре",
+  "howToUse": "Как использовать",
+  "monthNames": "Названия месяцев",
+  "gregorianMonths": "Григорианские",
+  "neutralMonths": "Нейтральные",
+  "darkMode": "Темная тема",
+  "darkModeOn": "Темная",
+  "lightModeOn": "Светлая"
 }

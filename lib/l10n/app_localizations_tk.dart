@@ -12,6 +12,9 @@ class AppLocalizationsTk extends AppLocalizations {
   String get appTitle => 'Bitarap Senenama';
 
   @override
+  String get calendar => 'Senenama';
+
+  @override
   String get normalCalendar => 'Adaty Senenama';
 
   @override
@@ -72,6 +75,42 @@ class AppLocalizationsTk extends AppLocalizations {
   String get december => 'Dekabr';
 
   @override
+  String get adam => 'Adam';
+
+  @override
+  String get eve => 'Ewa';
+
+  @override
+  String get noah => 'Nuh';
+
+  @override
+  String get abraham => 'Ybraýym';
+
+  @override
+  String get moses => 'Musa';
+
+  @override
+  String get icon => 'Nyşan';
+
+  @override
+  String get ilham => 'Ylham';
+
+  @override
+  String get avesta => 'Awesta';
+
+  @override
+  String get shinto => 'Şinto';
+
+  @override
+  String get aqdas => 'Agdas';
+
+  @override
+  String get nirvana => 'Nirwana';
+
+  @override
+  String get dharma => 'Dharma';
+
+  @override
   String get monday => 'Duş';
 
   @override
@@ -106,4 +145,31 @@ class AppLocalizationsTk extends AppLocalizations {
 
   @override
   String get specialDay => 'Aýratyn gün';
+
+  @override
+  String get from => 'Dan';
+
+  @override
+  String get aboutCalendar => 'Bitarap Senenama barada';
+
+  @override
+  String get howToUse => 'Nädip ulanmaly';
+
+  @override
+  String get monthNames => 'Aý atlary';
+
+  @override
+  String get gregorianMonths => 'Gregorian';
+
+  @override
+  String get neutralMonths => 'Bitarap';
+
+  @override
+  String get darkMode => 'Garaňky tema';
+
+  @override
+  String get darkModeOn => 'Garaňky';
+
+  @override
+  String get lightModeOn => 'Ýagty';
 }

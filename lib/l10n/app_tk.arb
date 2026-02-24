@@ -1,5 +1,7 @@
 {
+  "@@locale": "tk",
   "appTitle": "Bitarap Senenama",
+  "calendar": "Senenama",
   "normalCalendar": "Adaty Senenama",
   "neutralCalendar": "Bitarap Senenama",
   "comparison": "Deňeşdirmek",
@@ -8,7 +10,6 @@
   "language": "Dil",
   "turkmen": "Türkmen",
   "russian": "Русский",
-  
   "january": "Ýanwar",
   "february": "Fewral",
   "march": "Mart",
@@ -21,7 +22,18 @@
   "october": "Oktýabr",
   "november": "Noýabr",
   "december": "Dekabr",
-  
+  "adam": "Adam",
+  "eve": "Ewa",
+  "noah": "Nuh",
+  "abraham": "Ybraýym",
+  "moses": "Musa",
+  "icon": "Nyşan",
+  "ilham": "Ylham",
+  "avesta": "Awesta",
+  "shinto": "Şinto",
+  "aqdas": "Agdas",
+  "nirvana": "Nirwana",
+  "dharma": "Dharma",
   "monday": "Duş",
   "tuesday": "Siş",
   "wednesday": "Çar",
@@ -29,10 +41,18 @@
   "friday": "Ann",
   "saturday": "Şen",
   "sunday": "Ýek",
-  
   "convertDate": "Senäni öwürmek",
   "selectDate": "Senäni saýla",
   "today": "Şu gün",
   "leapYear": "Artykmaç ýyl",
-  "specialDay": "Aýratyn gün"
+  "specialDay": "Aýratyn gün",
+  "from": "Dan",
+  "aboutCalendar": "Bitarap Senenama barada",
+  "howToUse": "Nädip ulanmaly",
+  "monthNames": "Aý atlary",
+  "gregorianMonths": "Gregorian",
+  "neutralMonths": "Bitarap",
+  "darkMode": "Garaňky tema",
+  "darkModeOn": "Garaňky",
+  "lightModeOn": "Ýagty"
 }

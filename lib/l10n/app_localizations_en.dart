@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Neutral Calendar';
 
   @override
+  String get calendar => 'Calendar';
+
+  @override
   String get normalCalendar => 'Normal Calendar';
 
   @override
@@ -72,6 +75,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get december => 'December';
 
   @override
+  String get adam => 'Adam';
+
+  @override
+  String get eve => 'Eve';
+
+  @override
+  String get noah => 'Noah';
+
+  @override
+  String get abraham => 'Abraham';
+
+  @override
+  String get moses => 'Moses';
+
+  @override
+  String get icon => 'Icon';
+
+  @override
+  String get ilham => 'Ilham';
+
+  @override
+  String get avesta => 'Avesta';
+
+  @override
+  String get shinto => 'Shinto';
+
+  @override
+  String get aqdas => 'Aqdas';
+
+  @override
+  String get nirvana => 'Nirvana';
+
+  @override
+  String get dharma => 'Dharma';
+
+  @override
   String get monday => 'Mon';
 
   @override
@@ -106,4 +145,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specialDay => 'Special Day';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get aboutCalendar => 'About Neutral Calendar';
+
+  @override
+  String get howToUse => 'How to use';
+
+  @override
+  String get monthNames => 'Month Names';
+
+  @override
+  String get gregorianMonths => 'Gregorian';
+
+  @override
+  String get neutralMonths => 'Neutral';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get darkModeOn => 'Dark';
+
+  @override
+  String get lightModeOn => 'Light';
 }

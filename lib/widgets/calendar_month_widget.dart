@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../models/calendar_type.dart';
 import '../services/calendar_converter.dart';
-import '../models/calendar_date.dart';
 
 class CalendarMonthWidget extends StatelessWidget {
   final int year;
   final int month;
   final CalendarType calendarType;
+  final int? selectedDay;
+  final Function(int day)? onDaySelected;
+  final Function(int year, int month, int day)? onPreviousMonthDaySelected;
+  final Function(int year, int month, int day)? onNextMonthDaySelected;
 
   const CalendarMonthWidget({
     super.key,
     required this.year,
     required this.month,
     required this.calendarType,
+    this.selectedDay,
+    this.onDaySelected,
+    this.onPreviousMonthDaySelected,
+    this.onNextMonthDaySelected,
   });
 
   @override
@@ -32,20 +39,8 @@ class CalendarMonthWidget extends StatelessWidget {
       firstWeekday =
           firstDayOfMonth.weekday - 1; // Convert to 0-based (Mon = 0)
     } else {
-      // For Neutral calendar, apply the offset
-      final normalDate = CalendarDate(
-        year: year,
-        month: month,
-        day: 1,
-        calendarType: CalendarType.normal,
-      );
-      final neutralDate = CalendarConverter.normalToNeutral(normalDate);
-      final firstDayOfMonth = DateTime(
-        neutralDate.year,
-        neutralDate.month,
-        neutralDate.day,
-      );
-      firstWeekday = firstDayOfMonth.weekday - 1;
+      // For Neutral calendar, use its own calculation
+      firstWeekday = CalendarConverter.getFirstWeekdayNeutral(year, month);
     }
 
     return Column(
@@ -63,31 +58,97 @@ class CalendarMonthWidget extends StatelessWidget {
             _buildWeekdayHeader(localizations.sunday, calendarType),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         // Calendar grid
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            childAspectRatio: 1,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate number of weeks needed (rows)
+              final totalCells = firstWeekday + daysInMonth;
+              final weeksNeeded = (totalCells / 7).ceil();
+
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  childAspectRatio:
+                      constraints.maxWidth /
+                      (constraints.maxHeight / weeksNeeded) /
+                      7,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 2,
+                ),
+                itemCount: weeksNeeded * 7, // Ensure we fill all weeks
+                itemBuilder: (context, index) {
+                  // Previous month days
+                  if (index < firstWeekday) {
+                    final prevMonth = month == 1 ? 12 : month - 1;
+                    final prevYear = month == 1 ? year - 1 : year;
+                    final daysInPrevMonth = calendarType == CalendarType.normal
+                        ? CalendarConverter.getDaysInMonthNormal(
+                            prevYear,
+                            prevMonth,
+                          )
+                        : CalendarConverter.getDaysInMonthNeutral(
+                            prevYear,
+                            prevMonth,
+                          );
+                    final day = daysInPrevMonth - (firstWeekday - index - 1);
+                    return _buildDayCell(
+                      day,
+                      false,
+                      false,
+                      calendarType,
+                      isDisabled: true,
+                      onTap: onPreviousMonthDaySelected != null
+                          ? () => onPreviousMonthDaySelected!(
+                              prevYear,
+                              prevMonth,
+                              day,
+                            )
+                          : null,
+                    );
+                  }
+
+                  // Next month days
+                  if (index >= firstWeekday + daysInMonth) {
+                    final nextMonth = month == 12 ? 1 : month + 1;
+                    final nextYear = month == 12 ? year + 1 : year;
+                    final day = index - firstWeekday - daysInMonth + 1;
+                    return _buildDayCell(
+                      day,
+                      false,
+                      false,
+                      calendarType,
+                      isDisabled: true,
+                      onTap: onNextMonthDaySelected != null
+                          ? () => onNextMonthDaySelected!(
+                              nextYear,
+                              nextMonth,
+                              day,
+                            )
+                          : null,
+                    );
+                  }
+
+                  // Current month days
+                  final day = index - firstWeekday + 1;
+                  final isToday =
+                      DateTime.now().year == year &&
+                      DateTime.now().month == month &&
+                      DateTime.now().day == day;
+                  // Only show selection if the selected day is valid for this calendar
+                  final isSelected =
+                      selectedDay != null &&
+                      selectedDay! <= daysInMonth &&
+                      selectedDay == day;
+
+                  return _buildDayCell(day, isToday, isSelected, calendarType);
+                },
+              );
+            },
           ),
-          itemCount: firstWeekday + daysInMonth,
-          itemBuilder: (context, index) {
-            if (index < firstWeekday) {
-              return const SizedBox();
-            }
-
-            final day = index - firstWeekday + 1;
-            final isToday =
-                DateTime.now().year == year &&
-                DateTime.now().month == month &&
-                DateTime.now().day == day;
-
-            return _buildDayCell(day, isToday, calendarType);
-          },
         ),
       ],
     );
@@ -106,51 +167,78 @@ class CalendarMonthWidget extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: color,
-            fontSize: 12,
+            fontSize: 11,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDayCell(int day, bool isToday, CalendarType calendarType) {
-    Color backgroundColor;
-    Color textColor = Colors.black87;
+  Widget _buildDayCell(
+    int day,
+    bool isToday,
+    bool isSelected,
+    CalendarType calendarType, {
+    bool isDisabled = false,
+    VoidCallback? onTap,
+  }) {
+    Color? backgroundColor;
+    Color? textColor;
+    Color borderColor;
 
-    if (isToday) {
+    if (isDisabled) {
+      backgroundColor = null;
+      textColor = Colors.grey.shade400;
+      borderColor = Colors.grey.shade200;
+    } else if (isSelected) {
+      backgroundColor = calendarType == CalendarType.normal
+          ? Colors.blue.shade700
+          : Colors.green.shade700;
+      textColor = Colors.white;
+      borderColor = backgroundColor!;
+    } else if (isToday) {
       backgroundColor = calendarType == CalendarType.normal
           ? Colors.blue.shade100
           : Colors.green.shade100;
       textColor = calendarType == CalendarType.normal
           ? Colors.blue.shade900
           : Colors.green.shade900;
+      borderColor = calendarType == CalendarType.normal
+          ? Colors.blue.shade300
+          : Colors.green.shade300;
     } else {
-      backgroundColor = Colors.grey.shade50;
+      backgroundColor = null;
+      textColor = null;
+      borderColor = Colors.grey.shade300;
     }
 
-    // TODO: Apply color coding based on special days from the image
-    // This would check the CalendarDate and apply yellow, green, pink, etc.
-
-    return Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Center(
-        child: Text(
-          day.toString(),
-          style: TextStyle(
-            color: textColor,
-            fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
+    return InkWell(
+      onTap: isDisabled
+          ? onTap
+          : (onDaySelected != null ? () => onDaySelected!(day) : null),
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(color: borderColor, width: isSelected ? 1.5 : 0.8),
+          borderRadius: BorderRadius.circular(2),
+        ),
+        child: Center(
+          child: Text(
+            day.toString(),
+            style: TextStyle(
+              color: textColor,
+              fontWeight: isToday || isSelected
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              fontSize: 13,
+            ),
           ),
         ),
       ),

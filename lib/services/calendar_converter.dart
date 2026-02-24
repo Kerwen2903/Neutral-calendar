@@ -9,32 +9,32 @@ class CalendarConverter {
   // - Exception: February has 30 days (31 in leap years)
   // - Exception: December (last month) has 31 days
   // - Year starts on Sunday, ends on Sunday
-  
+
   static const int neutralMonthsPerYear = 12;
-  
+
   // Get days in month for Neutral calendar
   static int getDaysInMonthNeutral(int year, int month) {
     if (month < 1 || month > 12) return 30;
-    
+
     // Season pattern: 31, 30, 30
     switch (month) {
-      case 1:  // January - 1st month of season
+      case 1: // January - 1st month of season
         return 31;
-      case 2:  // February - 2nd month (30 normally, 31 in leap year)
+      case 2: // February - 2nd month (30 normally, 31 in leap year)
         return isLeapYearNeutral(year) ? 31 : 30;
-      case 3:  // March - 3rd month
+      case 3: // March - 3rd month
         return 30;
-      case 4:  // April - 1st month of season
+      case 4: // April - 1st month of season
         return 31;
-      case 5:  // May - 2nd month
+      case 5: // May - 2nd month
         return 30;
-      case 6:  // June - 3rd month
+      case 6: // June - 3rd month
         return 30;
-      case 7:  // July - 1st month of season
+      case 7: // July - 1st month of season
         return 31;
-      case 8:  // August - 2nd month
+      case 8: // August - 2nd month
         return 30;
-      case 9:  // September - 3rd month
+      case 9: // September - 3rd month
         return 30;
       case 10: // October - 1st month of season
         return 31;
@@ -53,14 +53,34 @@ class CalendarConverter {
       throw ArgumentError('Input must be a Normal calendar date');
     }
 
-    int totalDays = _getTotalDaysFromEpoch(
+    // Get day of year in Gregorian calendar
+    final startOfYear = DateTime(normalDate.year, 1, 1);
+    final targetDate = DateTime(
       normalDate.year,
       normalDate.month,
       normalDate.day,
     );
+    int dayOfYear = targetDate.difference(startOfYear).inDays + 1;
 
-    int adjustedDays = totalDays - 28;
-    return _daysToNeutralDate(adjustedDays);
+    // Convert to Neutral calendar month and day
+    int month = 1;
+    int day = dayOfYear;
+
+    while (month <= 12) {
+      final daysInMonth = getDaysInMonthNeutral(normalDate.year, month);
+      if (day <= daysInMonth) {
+        break;
+      }
+      day -= daysInMonth;
+      month++;
+    }
+
+    return CalendarDate(
+      year: normalDate.year,
+      month: month,
+      day: day,
+      calendarType: CalendarType.neutral,
+    );
   }
 
   // Convert from Neutral to Normal (Gregorian) calendar
@@ -69,14 +89,23 @@ class CalendarConverter {
       throw ArgumentError('Input must be a Neutral calendar date');
     }
 
-    int totalDays = _getTotalDaysFromEpoch(
-      neutralDate.year,
-      neutralDate.month,
-      neutralDate.day,
-    );
+    // Convert Neutral date to day of year
+    int dayOfYear = 0;
+    for (int m = 1; m < neutralDate.month; m++) {
+      dayOfYear += getDaysInMonthNeutral(neutralDate.year, m);
+    }
+    dayOfYear += neutralDate.day;
 
-    int adjustedDays = totalDays + 28;
-    return _daysToNormalDate(adjustedDays);
+    // Convert day of year to Gregorian date
+    final startOfYear = DateTime(neutralDate.year, 1, 1);
+    final targetDate = startOfYear.add(Duration(days: dayOfYear - 1));
+
+    return CalendarDate(
+      year: targetDate.year,
+      month: targetDate.month,
+      day: targetDate.day,
+      calendarType: CalendarType.normal,
+    );
   }
 
   // Create a date mapping between both systems
@@ -97,14 +126,34 @@ class CalendarConverter {
 
   // Helper: Convert days to Neutral calendar date
   static CalendarDate _daysToNeutralDate(int days) {
-    // Implement the Neutral calendar logic based on your friend's system
-    // This is a placeholder implementation
-    final baseDate = DateTime(2000, 1, 1).add(Duration(days: days));
+    // Calculate from epoch (Jan 1, 2000) using Neutral calendar structure
+    final normalDate = DateTime(2000, 1, 1).add(Duration(days: days));
+
+    // For now, use the same year as Gregorian
+    int year = normalDate.year;
+
+    // Calculate day of year in Gregorian calendar
+    final startOfYear = DateTime(year, 1, 1);
+    int dayOfYear = normalDate.difference(startOfYear).inDays + 1;
+
+    // Convert to Neutral calendar month and day
+    // Neutral calendar pattern: 31, 30, 30, 31, 30, 30, 31, 30, 30, 31, 30, 31
+    int month = 1;
+    int day = dayOfYear;
+
+    while (month <= 12) {
+      final daysInMonth = getDaysInMonthNeutral(year, month);
+      if (day <= daysInMonth) {
+        break;
+      }
+      day -= daysInMonth;
+      month++;
+    }
 
     return CalendarDate(
-      year: baseDate.year,
-      month: baseDate.month,
-      day: baseDate.day,
+      year: year,
+      month: month,
+      day: day,
       calendarType: CalendarType.neutral,
     );
   }
@@ -142,7 +191,7 @@ class CalendarConverter {
     }
     return 31;
   }
-  
+
   // Get first day of week for a month in Neutral calendar
   // Neutral calendar always starts the year on Sunday (index 6)
   static int getFirstWeekdayNeutral(int year, int month) {
@@ -151,7 +200,7 @@ class CalendarConverter {
     for (int m = 1; m < month; m++) {
       totalDays += getDaysInMonthNeutral(year, m);
     }
-    
+
     // Year starts on Sunday (index 6)
     // Add total days and mod 7 to get current month's starting weekday
     return (6 + totalDays) % 7;

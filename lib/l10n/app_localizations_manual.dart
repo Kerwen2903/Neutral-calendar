@@ -40,7 +40,7 @@ class AppLocalizations {
   String get turkmen => 'Türkmen';
   String get russian => 'Русский';
 
-  // Months
+  // Gregorian Months
   String get january =>
       _localizedStrings[locale.languageCode]?['january'] ?? 'January';
   String get february =>
@@ -62,6 +62,28 @@ class AppLocalizations {
       _localizedStrings[locale.languageCode]?['november'] ?? 'November';
   String get december =>
       _localizedStrings[locale.languageCode]?['december'] ?? 'December';
+
+  // Neutral Calendar Months
+  String get adam => _localizedStrings[locale.languageCode]?['adam'] ?? 'Adam';
+  String get eve => _localizedStrings[locale.languageCode]?['eve'] ?? 'Eve';
+  String get noah => _localizedStrings[locale.languageCode]?['noah'] ?? 'Noah';
+  String get abraham =>
+      _localizedStrings[locale.languageCode]?['abraham'] ?? 'Abraham';
+  String get moses =>
+      _localizedStrings[locale.languageCode]?['moses'] ?? 'Moses';
+  String get icon => _localizedStrings[locale.languageCode]?['icon'] ?? 'Icon';
+  String get ilham =>
+      _localizedStrings[locale.languageCode]?['ilham'] ?? 'Ilham';
+  String get avesta =>
+      _localizedStrings[locale.languageCode]?['avesta'] ?? 'Avesta';
+  String get shinto =>
+      _localizedStrings[locale.languageCode]?['shinto'] ?? 'Shinto';
+  String get aqdas =>
+      _localizedStrings[locale.languageCode]?['aqdas'] ?? 'Aqdas';
+  String get nirvana =>
+      _localizedStrings[locale.languageCode]?['nirvana'] ?? 'Nirvana';
+  String get dharma =>
+      _localizedStrings[locale.languageCode]?['dharma'] ?? 'Dharma';
 
   // Weekdays
   String get monday =>
@@ -96,6 +118,18 @@ class AppLocalizations {
       'About Neutral Calendar';
   String get howToUse =>
       _localizedStrings[locale.languageCode]?['howToUse'] ?? 'How to use';
+  String get monthNames =>
+      _localizedStrings[locale.languageCode]?['monthNames'] ?? 'Month Names';
+  String get gregorianMonths =>
+      _localizedStrings[locale.languageCode]?['gregorianMonths'] ?? 'Gregorian';
+  String get neutralMonths =>
+      _localizedStrings[locale.languageCode]?['neutralMonths'] ?? 'Neutral';
+  String get darkMode =>
+      _localizedStrings[locale.languageCode]?['darkMode'] ?? 'Dark Mode';
+  String get darkModeOn =>
+      _localizedStrings[locale.languageCode]?['darkModeOn'] ?? 'Dark';
+  String get lightModeOn =>
+      _localizedStrings[locale.languageCode]?['lightModeOn'] ?? 'Light';
 
   static const Map<String, Map<String, String>> _localizedStrings = {
     'en': {
@@ -119,6 +153,18 @@ class AppLocalizations {
       'october': 'October',
       'november': 'November',
       'december': 'December',
+      'adam': 'Adam',
+      'eve': 'Eve',
+      'noah': 'Noah',
+      'abraham': 'Abraham',
+      'moses': 'Moses',
+      'icon': 'Icon',
+      'ilham': 'Ilham',
+      'avesta': 'Avesta',
+      'shinto': 'Shinto',
+      'aqdas': 'Aqdas',
+      'nirvana': 'Nirvana',
+      'dharma': 'Dharma',
       'monday': 'Mon',
       'tuesday': 'Tue',
       'wednesday': 'Wed',
@@ -134,6 +180,12 @@ class AppLocalizations {
       'from': 'From',
       'aboutCalendar': 'About Neutral Calendar',
       'howToUse': 'How to use',
+      'monthNames': 'Month Names',
+      'gregorianMonths': 'Gregorian',
+      'neutralMonths': 'Neutral',
+      'darkMode': 'Dark Mode',
+      'darkModeOn': 'Dark',
+      'lightModeOn': 'Light',
     },
     'ru': {
       'appTitle': 'Нейтральный Календарь',
@@ -156,6 +208,18 @@ class AppLocalizations {
       'october': 'Октябрь',
       'november': 'Ноябрь',
       'december': 'Декабрь',
+      'adam': 'Адам',
+      'eve': 'Ева',
+      'noah': 'Ной',
+      'abraham': 'Авраам',
+      'moses': 'Моисей',
+      'icon': 'Икон',
+      'ilham': 'Илхам',
+      'avesta': 'Авеста',
+      'shinto': 'Синто',
+      'aqdas': 'Агдас',
+      'nirvana': 'Нирвана',
+      'dharma': 'Дхарма',
       'monday': 'Пн',
       'tuesday': 'Вт',
       'wednesday': 'Ср',
@@ -171,6 +235,12 @@ class AppLocalizations {
       'from': 'От',
       'aboutCalendar': 'О Нейтральном Календаре',
       'howToUse': 'Как использовать',
+      'monthNames': 'Названия месяцев',
+      'gregorianMonths': 'Григорианские',
+      'neutralMonths': 'Нейтральные',
+      'darkMode': 'Темная тема',
+      'darkModeOn': 'Темная',
+      'lightModeOn': 'Светлая',
     },
     'tk': {
       'appTitle': 'Bitarap Senenama',
@@ -193,6 +263,18 @@ class AppLocalizations {
       'october': 'Oktýabr',
       'november': 'Noýabr',
       'december': 'Dekabr',
+      'adam': 'Adam',
+      'eve': 'Ewa',
+      'noah': 'Nuh',
+      'abraham': 'Ybraýym',
+      'moses': 'Musa',
+      'icon': 'Nyşan',
+      'ilham': 'Ylham',
+      'avesta': 'Awesta',
+      'shinto': 'Şinto',
+      'aqdas': 'Agdas',
+      'nirvana': 'Nirwana',
+      'dharma': 'Dharma',
       'monday': 'Duş',
       'tuesday': 'Siş',
       'wednesday': 'Çar',
@@ -208,6 +290,12 @@ class AppLocalizations {
       'from': 'Dan',
       'aboutCalendar': 'Bitarap Senenama barada',
       'howToUse': 'Nädip ulanmaly',
+      'monthNames': 'Aý atlary',
+      'gregorianMonths': 'Gregorian',
+      'neutralMonths': 'Bitarap',
+      'darkMode': 'Garaňky tema',
+      'darkModeOn': 'Garaňky',
+      'lightModeOn': 'Ýagty',
     },
   };
 }

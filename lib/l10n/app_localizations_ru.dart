@@ -12,6 +12,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appTitle => 'Нейтральный Календарь';
 
   @override
+  String get calendar => 'Календарь';
+
+  @override
   String get normalCalendar => 'Обычный Календарь';
 
   @override
@@ -72,6 +75,42 @@ class AppLocalizationsRu extends AppLocalizations {
   String get december => 'Декабрь';
 
   @override
+  String get adam => 'Адам';
+
+  @override
+  String get eve => 'Ева';
+
+  @override
+  String get noah => 'Ной';
+
+  @override
+  String get abraham => 'Авраам';
+
+  @override
+  String get moses => 'Моисей';
+
+  @override
+  String get icon => 'Икона';
+
+  @override
+  String get ilham => 'Ильхам';
+
+  @override
+  String get avesta => 'Авеста';
+
+  @override
+  String get shinto => 'Синто';
+
+  @override
+  String get aqdas => 'Акдас';
+
+  @override
+  String get nirvana => 'Нирвана';
+
+  @override
+  String get dharma => 'Дхарма';
+
+  @override
   String get monday => 'Пн';
 
   @override
@@ -106,4 +145,31 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get specialDay => 'Особый день';
+
+  @override
+  String get from => 'От';
+
+  @override
+  String get aboutCalendar => 'О Нейтральном Календаре';
+
+  @override
+  String get howToUse => 'Как использовать';
+
+  @override
+  String get monthNames => 'Названия месяцев';
+
+  @override
+  String get gregorianMonths => 'Григорианские';
+
+  @override
+  String get neutralMonths => 'Нейтральные';
+
+  @override
+  String get darkMode => 'Темная тема';
+
+  @override
+  String get darkModeOn => 'Темная';
+
+  @override
+  String get lightModeOn => 'Светлая';
 }
