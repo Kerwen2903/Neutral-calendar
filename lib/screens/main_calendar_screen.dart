@@ -220,7 +220,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                   ).colorScheme.onPrimaryContainer,
                                 ),
                           ),
-                          if (CalendarConverter.isLeapYearNormal(_currentYear))
+                          if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
                             Container(
                               margin: const EdgeInsets.only(top: 3),
                               padding: const EdgeInsets.symmetric(
@@ -378,7 +378,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
             left: 0,
             right: 0,
             child: Text(
-              '★',
+              '✦',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 7,
