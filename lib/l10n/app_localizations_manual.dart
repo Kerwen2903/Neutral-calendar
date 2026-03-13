@@ -35,6 +35,8 @@ class AppLocalizations {
       _localizedStrings[locale.languageCode]?['converter'] ?? 'Converter';
   String get settings =>
       _localizedStrings[locale.languageCode]?['settings'] ?? 'Settings';
+  String get lockScreen =>
+      _localizedStrings[locale.languageCode]?['lockScreen'] ?? 'Lock';
   String get language =>
       _localizedStrings[locale.languageCode]?['language'] ?? 'Language';
   String get turkmen => 'Türkmen';
@@ -134,12 +136,13 @@ class AppLocalizations {
   static const Map<String, Map<String, String>> _localizedStrings = {
     'en': {
       'appTitle': 'Neutral Calendar',
-      'calendar': 'Calendar',
+      'calendar': 'Neutral Style',
       'normalCalendar': 'Normal Calendar',
       'neutralCalendar': 'Neutral Calendar',
-      'comparison': 'Comparison',
+      'comparison': 'Combo Style',
       'converter': 'Converter',
       'settings': 'Settings',
+      'lockScreen': 'Lock',
       'language': 'Language',
       'january': 'January',
       'february': 'February',
@@ -189,12 +192,13 @@ class AppLocalizations {
     },
     'ru': {
       'appTitle': 'Нейтральный Календарь',
-      'calendar': 'Календарь',
+      'calendar': 'Нейтральный стиль',
       'normalCalendar': 'Обычный Календарь',
       'neutralCalendar': 'Нейтральный Календарь',
-      'comparison': 'Сравнение',
+      'comparison': 'Комбинация стилей',
       'converter': 'Конвертер',
       'settings': 'Настройки',
+      'lockScreen': 'Заставка',
       'language': 'Язык',
       'january': 'Январь',
       'february': 'Февраль',
@@ -213,11 +217,11 @@ class AppLocalizations {
       'noah': 'Ной',
       'abraham': 'Авраам',
       'moses': 'Моисей',
-      'icon': 'Икон',
-      'ilham': 'Илхам',
+      'icon': 'Икона',
+      'ilham': 'Ильхам',
       'avesta': 'Авеста',
       'shinto': 'Синто',
-      'aqdas': 'Агдас',
+      'aqdas': 'Акдас',
       'nirvana': 'Нирвана',
       'dharma': 'Дхарма',
       'monday': 'Пн',
@@ -244,12 +248,13 @@ class AppLocalizations {
     },
     'tk': {
       'appTitle': 'Bitarap Senenama',
-      'calendar': 'Senenama',
+      'calendar': 'Bitarap stil',
       'normalCalendar': 'Adaty Senenama',
       'neutralCalendar': 'Bitarap Senenama',
-      'comparison': 'Deňeşdirmek',
+      'comparison': 'Stil utgaşmasy',
       'converter': 'Öwürmek',
       'settings': 'Sazlamalar',
+      'lockScreen': 'Zasawka',
       'language': 'Dil',
       'january': 'Ýanwar',
       'february': 'Fewral',

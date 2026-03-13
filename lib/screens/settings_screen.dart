@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../main.dart';
+import 'lock_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -95,7 +96,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final currentLocale = Localizations.localeOf(context);
+    // Use the actual selected locale from app state, not Localizations.localeOf,
+    // because for Turkmen the Material locale is set to 'ru' to avoid a Flutter
+    // crash, so localeOf would incorrectly return 'ru'.
+    final currentLocale =
+        NeutralCalendarApp.of(context)?.selectedLocale ??
+        Localizations.localeOf(context);
     final appState = NeutralCalendarApp.of(context);
 
     return Scaffold(
@@ -157,6 +163,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               // TODO: Show usage guide
             },
+          ),
+          const Divider(),
+          // ── Lock screen background colour ─────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.phone_android, size: 20),
+                    const SizedBox(width: 12),
+                    Text(
+                      localizations.lockScreen,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: List.generate(LockScreen.bgColors.length, (i) {
+                    final selected =
+                        (appState?.lockScreenColorIndex ?? 0) == i;
+                    return GestureDetector(
+                      onTap: () {
+                        appState?.setLockScreenColor(i);
+                        setState(() {});
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        margin: const EdgeInsets.only(right: 12),
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: LockScreen.bgColors[i],
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: selected
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey.shade400,
+                            width: selected ? 3 : 1.5,
+                          ),
+                        ),
+                        child: selected
+                            ? const Icon(Icons.check,
+                                color: Colors.white, size: 20)
+                            : null,
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ],
       ),

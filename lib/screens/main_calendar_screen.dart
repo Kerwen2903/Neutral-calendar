@@ -143,11 +143,15 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     final appState = NeutralCalendarApp.of(context);
     final useNeutral = appState?.useNeutralMonthNames ?? true;
 
-    // Get days in month for Neutral calendar
+    // Get days in month for Neutral calendar (calculation value, stays 30 for Feb)
     final daysInMonth = CalendarConverter.getDaysInMonthNeutral(
       _currentYear,
       _currentMonth,
     );
+
+    // In a leap year, Feb displays a visual-only Feb 31 leap day cell (Positioned below grid).
+    final isNeutralLeapFeb =
+        _currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear);
 
     // Get first weekday for this month in Neutral calendar
     // Neutral calendar year starts on Sunday
@@ -201,15 +205,42 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                         icon: const Icon(Icons.chevron_left, size: 32),
                         onPressed: _previousMonth,
                       ),
-                      Text(
-                        '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onPrimaryContainer,
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                                ),
+                          ),
+                          if (CalendarConverter.isLeapYearNormal(_currentYear))
+                            Container(
+                              margin: const EdgeInsets.only(top: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade400,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '✦ Leap Year',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
                             ),
+                        ],
                       ),
                       IconButton(
                         icon: const Icon(Icons.chevron_right, size: 32),
@@ -230,7 +261,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       _buildWeekdayHeader(localizations.thursday),
                       _buildWeekdayHeader(localizations.friday),
                       _buildWeekdayHeader(localizations.saturday),
-                      _buildWeekdayHeader(localizations.sunday),
+                      _buildWeekdayHeader(localizations.sunday, isSunday: true),
                     ],
                   ),
                 ),
@@ -239,36 +270,60 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
+                      final cellSize = (constraints.maxWidth - 16 - 4 * 6) / 7;
+                      final gridRows =
+                          ((firstWeekday + daysInMonth) / 7).ceil();
+
                       return Padding(
                         padding: const EdgeInsets.all(8),
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                        child: Stack(
+                          children: [
+                            GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 7,
                                 childAspectRatio: 1,
                                 crossAxisSpacing: 4,
                                 mainAxisSpacing: 4,
                               ),
-                          itemCount: firstWeekday + daysInMonth,
-                          itemBuilder: (context, index) {
-                            if (index < firstWeekday) {
-                              return const SizedBox();
-                            }
+                              itemCount: firstWeekday + daysInMonth,
+                              itemBuilder: (context, index) {
+                                if (index < firstWeekday) {
+                                  return const SizedBox();
+                                }
 
-                            final day = index - firstWeekday + 1;
-                            final isToday =
-                                DateTime.now().year == _currentYear &&
-                                DateTime.now().month == _currentMonth &&
-                                DateTime.now().day == day;
+                                final day = index - firstWeekday + 1;
+                                final isToday =
+                                    DateTime.now().year == _currentYear &&
+                                        DateTime.now().month == _currentMonth &&
+                                        DateTime.now().day == day;
 
-                            final isSelected =
-                                _selectedDate.year == _currentYear &&
-                                _selectedDate.month == _currentMonth &&
-                                _selectedDate.day == day;
+                                final isSelected =
+                                    _selectedDate.year == _currentYear &&
+                                        _selectedDate.month == _currentMonth &&
+                                        _selectedDate.day == day;
 
-                            return _buildDayCell(day, isToday, isSelected);
-                          },
+                                final isSundayCell = index % 7 == 6;
+
+                                return _buildDayCell(
+                                  day,
+                                  isToday,
+                                  isSelected,
+                                  isSundayCell: isSundayCell,
+                                );
+                              },
+                            ),
+                            // Neutral Feb 31 — visual-only, placed between Thu & Fri below last row
+                            if (isNeutralLeapFeb)
+                              Positioned(
+                                top: gridRows * (cellSize + 4),
+                                left: 3.4 * (cellSize + 4),
+                                width: cellSize,
+                                height: cellSize * 0.9,
+                                child: _buildLeapDay31Cell(),
+                              ),
+                          ],
                         ),
                       );
                     },
@@ -279,7 +334,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildWeekdayHeader(String text) {
+  Widget _buildWeekdayHeader(String text, {bool isSunday = false}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -288,7 +343,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.primary,
+            color: isSunday
+                ? const Color(0xFF8B0000)
+                : Theme.of(context).colorScheme.primary,
             fontSize: 14,
           ),
         ),
@@ -296,7 +353,50 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildDayCell(int day, bool isToday, bool isSelected) {
+  Widget _buildLeapDay31Cell() {
+    return Container(
+      margin: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade100,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.amber.shade600, width: 1.5),
+      ),
+      child: Stack(
+        children: [
+          const Center(
+            child: Text(
+              '31',
+              style: TextStyle(
+                color: Color(0xFF7A3E00),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 3,
+            left: 0,
+            right: 0,
+            child: Text(
+              '★',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 7,
+                color: Colors.amber.shade700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayCell(
+    int day,
+    bool isToday,
+    bool isSelected, {
+    bool isSundayCell = false,
+  }) {
     Color backgroundColor;
     Color textColor;
     BoxDecoration decoration;
@@ -317,7 +417,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = Theme.of(context).colorScheme.onSurface;
+      textColor = isSundayCell
+          ? const Color(0xFF8B0000)
+          : Theme.of(context).colorScheme.onSurface;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -371,12 +473,39 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 icon: const Icon(Icons.chevron_left, size: 32),
                 onPressed: _previousYear,
               ),
-              Text(
-                '$_currentYear',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$_currentYear',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                  ),
+                  if (CalendarConverter.isLeapYearNormal(_currentYear)) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade400,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '✦ Leap',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange.shade900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
               IconButton(
                 icon: const Icon(Icons.chevron_right, size: 32),
@@ -422,6 +551,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       month,
     );
 
+    // Visual-only Feb 31 leap day in leap years
+    final isLeapFeb =
+        month == 2 && CalendarConverter.isLeapYearNormal(_currentYear);
+    final displayDaysInMonth = daysInMonth + (isLeapFeb ? 1 : 0);
+
     final isCurrentMonth =
         DateTime.now().year == _currentYear && DateTime.now().month == month;
 
@@ -449,11 +583,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 _getMonthName(localizations, month, useNeutral),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isCurrentMonth
-                      ? Theme.of(context).colorScheme.primary
-                      : null,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: isCurrentMonth
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                    ),
               ),
               const SizedBox(height: 4),
               // Mini calendar grid
@@ -464,14 +598,39 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     crossAxisCount: 7,
                     childAspectRatio: 1,
                   ),
-                  itemCount: firstWeekday + daysInMonth,
+                  itemCount: firstWeekday + displayDaysInMonth,
                   itemBuilder: (context, index) {
                     if (index < firstWeekday) {
                       return const SizedBox();
                     }
+
+                    // Neutral Feb 31 — visual-only leap day mini cell
+                    if (isLeapFeb && index == firstWeekday + daysInMonth) {
+                      return Container(
+                        margin: const EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade200,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.amber.shade600,
+                            width: 1,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '31',
+                            style: TextStyle(
+                              fontSize: 7,
+                              color: Colors.orange.shade900,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
                     final day = index - firstWeekday + 1;
-                    final isToday =
-                        DateTime.now().year == _currentYear &&
+                    final isToday = DateTime.now().year == _currentYear &&
                         DateTime.now().month == month &&
                         DateTime.now().day == day;
 
@@ -490,11 +649,12 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                             fontSize: 8,
                             color: isToday
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.7),
-                            fontWeight: isToday
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.7),
+                            fontWeight:
+                                isToday ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
                       ),

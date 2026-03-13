@@ -2,9 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations_manual.dart';
 import 'screens/home_screen.dart';
+import 'screens/lock_screen.dart';
 
 void main() {
   runApp(const NeutralCalendarApp());
+}
+
+/// Falls back to Russian Material localisations for Turkmen
+/// because [GlobalMaterialLocalizations] has no Turkmen bundle.
+class _MaterialFallbackDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const _MaterialFallbackDelegate();
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) {
+    final effective =
+        locale.languageCode == 'tk' ? const Locale('ru') : locale;
+    return GlobalMaterialLocalizations.delegate.load(effective);
+  }
+
+  @override
+  bool shouldReload(_MaterialFallbackDelegate old) => false;
 }
 
 class NeutralCalendarApp extends StatefulWidget {
@@ -22,6 +43,10 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   Locale _locale = const Locale('ru'); // Default to Russian
   bool _useNeutralMonthNames = true; // Default to Neutral month names
   ThemeMode _themeMode = ThemeMode.light; // Default to light theme
+  int _lockScreenColorIndex = 0; // 0=navy, 1=crimson, 2=black
+
+  Locale get selectedLocale => _locale;
+  int get lockScreenColorIndex => _lockScreenColorIndex;
 
   void setLocale(Locale locale) {
     setState(() {
@@ -41,28 +66,28 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
     });
   }
 
+  void setLockScreenColor(int index) {
+    setState(() {
+      _lockScreenColorIndex = index;
+    });
+  }
+
   bool get useNeutralMonthNames => _useNeutralMonthNames;
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   @override
   Widget build(BuildContext context) {
-    // For Turkmen locale, use Russian for Material widgets
-    // since GlobalMaterialLocalizations doesn't support Turkmen
-    final materialLocale = _locale.languageCode == 'tk'
-        ? const Locale('ru')
-        : _locale;
-
     return MaterialApp(
       title: 'Neutral Calendar',
       debugShowCheckedModeBanner: false,
-      locale: materialLocale,
+      locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
+        _MaterialFallbackDelegate(),   // maps tk → ru for Material widgets
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en'), Locale('ru')],
+      supportedLocales: AppLocalizations.supportedLocales, // en, ru, tk
       themeMode: _themeMode,
       theme: ThemeData(
         useMaterial3: true,
@@ -86,7 +111,8 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   }
 }
 
-// Wrapper widget to provide Turkmen localizations when needed
+// Simple wrapper – no Localizations.override needed now that MaterialApp
+// properly loads AppLocalizations with the real locale (including 'tk').
 class _LocalizedHome extends StatelessWidget {
   final Locale selectedLocale;
 
@@ -94,16 +120,6 @@ class _LocalizedHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If Turkmen is selected, override with Turkmen AppLocalizations
-    // while Material widgets use Russian (already set in MaterialApp)
-    if (selectedLocale.languageCode == 'tk') {
-      return Localizations.override(
-        context: context,
-        locale: const Locale('tk'),
-        delegates: const [AppLocalizations.delegate],
-        child: const HomeScreen(),
-      );
-    }
-    return const HomeScreen();
+    return LockScreen(child: const HomeScreen());
   }
 }

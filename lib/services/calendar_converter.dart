@@ -6,7 +6,7 @@ class CalendarConverter {
   // Neutral calendar structure:
   // - 12 months total
   // - Pattern for each season: 31, 30, 30 days
-  // - Exception: February has 30 days (31 in leap years)
+  // - February always has 30 days (no leap years; Gregorian Feb 29 is absorbed)
   // - Exception: December (last month) has 31 days
   // - Year starts on Sunday, ends on Sunday
 
@@ -17,11 +17,13 @@ class CalendarConverter {
     if (month < 1 || month > 12) return 30;
 
     // Season pattern: 31, 30, 30
+    // The Neutral calendar has NO leap years — February is always 30 days.
+    // The Gregorian leap day (Feb 29) is absorbed at the conversion layer.
     switch (month) {
       case 1: // January - 1st month of season
         return 31;
-      case 2: // February - 2nd month (30 normally, 31 in leap year)
-        return isLeapYearNeutral(year) ? 31 : 30;
+      case 2: // February - always 30 days (leap day handled in conversion)
+        return 30;
       case 3: // March - 3rd month
         return 30;
       case 4: // April - 1st month of season
@@ -62,6 +64,20 @@ class CalendarConverter {
     );
     int dayOfYear = targetDate.difference(startOfYear).inDays + 1;
 
+    // The Neutral calendar has no leap years.
+    // In a Gregorian leap year, skip the leap day (Feb 29 = day 60):
+    //   • Feb 29 itself is treated as Feb 28 in the Neutral calendar.
+    //   • All days from Mar 1 onward have their dayOfYear decremented by 1
+    //     so that the Neutral mapping stays identical to non-leap years.
+    if (isLeapYearNormal(normalDate.year)) {
+      if (dayOfYear == 60) {
+        // Feb 29 → treat as Feb 28 in Neutral
+        dayOfYear = 59;
+      } else if (dayOfYear > 60) {
+        dayOfYear -= 1;
+      }
+    }
+
     // Convert to Neutral calendar month and day
     int month = 1;
     int day = dayOfYear;
@@ -95,6 +111,13 @@ class CalendarConverter {
       dayOfYear += getDaysInMonthNeutral(neutralDate.year, m);
     }
     dayOfYear += neutralDate.day;
+
+    // In a Gregorian leap year, re-insert the leap day:
+    // any Neutral day that falls on or after position 60 (what would be
+    // Gregorian Mar 1 in a non-leap year) needs +1 to skip over Feb 29.
+    if (isLeapYearNormal(neutralDate.year) && dayOfYear >= 60) {
+      dayOfYear += 1;
+    }
 
     // Convert day of year to Gregorian date
     final startOfYear = DateTime(neutralDate.year, 1, 1);
@@ -136,6 +159,15 @@ class CalendarConverter {
     final startOfYear = DateTime(year, 1, 1);
     int dayOfYear = normalDate.difference(startOfYear).inDays + 1;
 
+    // Absorb Gregorian leap day: neutral calendar has no Feb 29.
+    if (isLeapYearNormal(year)) {
+      if (dayOfYear == 60) {
+        dayOfYear = 59; // Feb 29 → treated as Feb 28 in Neutral
+      } else if (dayOfYear > 60) {
+        dayOfYear -= 1;
+      }
+    }
+
     // Convert to Neutral calendar month and day
     // Neutral calendar pattern: 31, 30, 30, 31, 30, 30, 31, 30, 30, 31, 30, 31
     int month = 1;
@@ -175,10 +207,11 @@ class CalendarConverter {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
   }
 
-  // Check if a year is a leap year in the Neutral calendar
+  // Check if a year is a leap year in the Neutral calendar.
+  // The Neutral calendar has NO leap years — it always has 365 days.
+  // The Gregorian leap day is absorbed transparently in conversions.
   static bool isLeapYearNeutral(int year) {
-    // Use same logic as Gregorian for now
-    return isLeapYearNormal(year);
+    return false;
   }
 
   // Get number of days in a month for Normal calendar

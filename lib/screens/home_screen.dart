@@ -4,6 +4,7 @@ import 'main_calendar_screen.dart';
 import 'comparison_screen.dart';
 import 'converter_screen.dart';
 import 'settings_screen.dart';
+import 'lock_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,34 +27,87 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final List<_NavItem> navItems = [
+      _NavItem(Icons.calendar_month, localizations.calendar),
+      _NavItem(Icons.compare_arrows, localizations.comparison),
+      _NavItem(Icons.sync_alt, localizations.converter),
+      _NavItem(Icons.settings, localizations.settings),
+      _NavItem(Icons.phone_android, localizations.lockScreen),
+    ];
+
     return Scaffold(
       body: _screens[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month),
-            label: localizations.calendar,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: SizedBox(
+            height: 64,
+            child: Row(
+              children: List.generate(navItems.length, (i) {
+                // last item (lock screen) is a special action, not a tab
+                final isLockBtn = i == navItems.length - 1;
+                final selected = !isLockBtn && _selectedIndex == i;
+                final color = selected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.55);
+                return Expanded(
+                  child: InkWell(
+                    onTap: isLockBtn
+                        ? () => Navigator.of(context).push(
+                              PageRouteBuilder(
+                                opaque: false,
+                                pageBuilder: (_, __, ___) => LockScreen(
+                                  standaloneRoute: true,
+                                  child: const SizedBox.shrink(),
+                                ),
+                                transitionDuration: Duration.zero,
+                              ),
+                            )
+                        : () => setState(() => _selectedIndex = i),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(navItems[i].icon, color: color, size: 22),
+                        const SizedBox(height: 3),
+                        Text(
+                          navItems[i].label,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            height: 1.2,
+                            fontWeight:
+                                selected ? FontWeight.bold : FontWeight.normal,
+                            color: color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.compare_arrows),
-            label: localizations.comparison,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.sync_alt),
-            label: localizations.converter,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings),
-            label: localizations.settings,
-          ),
-        ],
+        ),
       ),
     );
   }
+}
+
+class _NavItem {
+  final IconData icon;
+  final String label;
+  const _NavItem(this.icon, this.label);
 }
