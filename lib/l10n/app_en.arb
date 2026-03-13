@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appTitle": "Neutral Calendar",
   "calendar": "Calendar",
-  "normalCalendar": "Normal Calendar",
+  "normalCalendar": "Gregorian Calendar",
   "neutralCalendar": "Neutral Calendar",
   "comparison": "Comparison",
   "converter": "Converter",

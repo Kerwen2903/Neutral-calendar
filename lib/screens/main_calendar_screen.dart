@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
+import 'lock_screen.dart';
 
 class MainCalendarScreen extends StatefulWidget {
   const MainCalendarScreen({super.key});
@@ -175,6 +176,20 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
             icon: const Icon(Icons.today),
             onPressed: _goToToday,
             tooltip: localizations.today,
+          ),
+          IconButton(
+            icon: const Icon(Icons.phone_android),
+            onPressed: () => Navigator.of(context).push(
+              PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (_, __, ___) => LockScreen(
+                  standaloneRoute: true,
+                  child: const SizedBox.shrink(),
+                ),
+                transitionDuration: Duration.zero,
+              ),
+            ),
+            tooltip: localizations.lockScreen,
           ),
         ],
       ),

@@ -15,7 +15,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get calendar => 'Календарь';
 
   @override
-  String get normalCalendar => 'Обычный Календарь';
+  String get normalCalendar => 'Григорианский Календарь';
 
   @override
   String get neutralCalendar => 'Нейтральный Календарь';
