@@ -304,7 +304,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       _buildWeekdayHeader(localizations.wednesday),
                       _buildWeekdayHeader(localizations.thursday),
                       _buildWeekdayHeader(localizations.friday),
-                      _buildWeekdayHeader(localizations.saturday, isSaturday: true),
+                      _buildWeekdayHeader(localizations.saturday),
                       _buildWeekdayHeader(localizations.sunday, isSunday: true),
                     ],
                   ),
@@ -367,14 +367,12 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                           _selectedDate.day == day;
 
                                   final isSundayCell = index % 7 == 6;
-                                  final isSaturdayCell = index % 7 == 5;
 
                                   return _buildDayCell(
                                     day,
                                     isToday,
                                     isSelected,
                                     isSundayCell: isSundayCell,
-                                    isSaturdayCell: isSaturdayCell,
                                   );
                                 },
                               ),
@@ -415,7 +413,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildWeekdayHeader(String text, {bool isSunday = false, bool isSaturday = false}) {
+  Widget _buildWeekdayHeader(String text, {bool isSunday = false}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -424,11 +422,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSaturday
+            color: isSunday
                 ? Colors.red
-                : (isSunday
-                    ? const Color(0xFF8B0000)
-                    : Theme.of(context).colorScheme.primary),
+                : Theme.of(context).colorScheme.primary,
             fontSize: 14,
           ),
         ),
@@ -479,7 +475,6 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     bool isToday,
     bool isSelected, {
     bool isSundayCell = false,
-    bool isSaturdayCell = false,
   }) {
     Color backgroundColor;
     Color textColor;
@@ -501,11 +496,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = isSaturdayCell
+      textColor = isSundayCell
           ? Colors.red
-          : (isSundayCell
-              ? const Color(0xFF8B0000)
-              : Theme.of(context).colorScheme.onSurface);
+          : Theme.of(context).colorScheme.onSurface;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -681,8 +674,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     (localizations.wednesday, false),
                     (localizations.thursday, false),
                     (localizations.friday, false),
-                    (localizations.saturday, true),
-                    (localizations.sunday, false),
+                    (localizations.saturday, false),
+                    (localizations.sunday, true),
                   ])
                     Expanded(
                       child: Text(
@@ -743,7 +736,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     final isToday = DateTime.now().year == _currentYear &&
                         DateTime.now().month == month &&
                         DateTime.now().day == day;
-                    final isSat = index % 7 == 5;
+                    final isSun = index % 7 == 6;
 
                     return Container(
                       margin: const EdgeInsets.all(1),
@@ -760,7 +753,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                             fontSize: 8,
                             color: isToday
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : (isSat
+                                : (isSun
                                     ? Colors.red.withValues(alpha: 0.8)
                                     : Theme.of(context)
                                         .colorScheme

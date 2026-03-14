@@ -276,15 +276,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              Text(
-                                '${localizations.normalCalendar} - ${_getMonthName(localizations, _normalMonth, false)}',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Colors.blue.shade700,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
                               Expanded(
                                 child: CalendarMonthWidget(
                                   year: _normalYear,
@@ -316,15 +307,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              Text(
-                                '${localizations.neutralCalendar} - ${_getMonthName(localizations, _neutralMonth, true)}',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Colors.green.shade700,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
                               Expanded(
                                 child: CalendarMonthWidget(
                                   year: _neutralYear,
