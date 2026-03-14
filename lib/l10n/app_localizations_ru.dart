@@ -102,7 +102,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shinto => 'Синто';
 
   @override
-  String get aqdas => 'Акдас';
+  String get aqdas => 'Агдас';
 
   @override
   String get nirvana => 'Нирвана';
