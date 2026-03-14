@@ -202,7 +202,16 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       ),
       body: _isYearView
           ? _buildYearView(localizations, useNeutral)
-          : Column(
+          : GestureDetector(
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity == null) return;
+                if (details.primaryVelocity! < -200) {
+                  _nextMonth();
+                } else if (details.primaryVelocity! > 200) {
+                  _previousMonth();
+                }
+              },
+              child: Column(
               children: [
                 // Month navigation header
                 Container(
@@ -220,92 +229,48 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       ),
                     ],
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      _circleArrow(Icons.chevron_left, _previousMonth),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          _circleArrow(Icons.chevron_left, _previousMonth),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimaryContainer,
-                                    ),
+                          Text(
+                            '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                                ),
+                          ),
+                          if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
+                            Container(
+                              margin: const EdgeInsets.only(top: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
                               ),
-                              if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
-                                Container(
-                                  margin: const EdgeInsets.only(top: 3),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.amber.shade400,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    '✦ Leap Year',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.orange.shade900,
-                                    ),
-                                  ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade400,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '✦ Leap Year',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
                                 ),
                             ],
                           ),
                           _circleArrow(Icons.chevron_right, _nextMonth),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      // Month swiper
-                      SizedBox(
-                        height: 32,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 12,
-                          itemBuilder: (context, index) {
-                            final month = index + 1;
-                            final isActive = month == _currentMonth;
-                            return GestureDetector(
-                              onTap: () {
-                                playClick();
-                                setState(() => _currentMonth = month);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: isActive
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  _getMonthName(localizations, month, useNeutral),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                    color: isActive
-                                        ? Theme.of(context).colorScheme.onPrimary
-                                        : Theme.of(context).colorScheme.onPrimaryContainer,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -392,6 +357,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                   ),
                 ),
               ],
+            ),
             ),
     );
   }
