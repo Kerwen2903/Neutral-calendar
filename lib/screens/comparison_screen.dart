@@ -216,28 +216,48 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     _circleArrow(Icons.chevron_right, _nextMonth),
                   ],
                 ),
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 3,
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-                  ),
-                  child: Slider(
-                    value: _normalMonth.toDouble(),
-                    min: 1,
-                    max: 12,
-                    divisions: 11,
-                    label: _getMonthName(localizations, _normalMonth, false),
-                    onChanged: (value) {
-                      playClick();
-                      final newMonth = value.round();
-                      final diff = newMonth - _normalMonth;
-                      setState(() {
-                        _normalMonth = newMonth;
-                        _neutralMonth = ((_neutralMonth + diff - 1) % 12) + 1;
-                        _selectedNormalDate = null;
-                        _selectedNeutralDate = null;
-                      });
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: 30,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 12,
+                    itemBuilder: (context, index) {
+                      final month = index + 1;
+                      final isActive = month == _normalMonth;
+                      return GestureDetector(
+                        onTap: () {
+                          playClick();
+                          final diff = month - _normalMonth;
+                          setState(() {
+                            _normalMonth = month;
+                            _neutralMonth = ((_neutralMonth + diff - 1) % 12) + 1;
+                            _selectedNormalDate = null;
+                            _selectedNeutralDate = null;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            _getMonthName(localizations, month, false),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                              color: isActive
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),

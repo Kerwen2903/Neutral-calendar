@@ -266,25 +266,43 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                           _circleArrow(Icons.chevron_right, _nextMonth),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      // Month slider
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 3,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-                        ),
-                        child: Slider(
-                          value: _currentMonth.toDouble(),
-                          min: 1,
-                          max: 12,
-                          divisions: 11,
-                          label: _getMonthName(localizations, _currentMonth, useNeutral),
-                          onChanged: (value) {
-                            playClick();
-                            setState(() {
-                              _currentMonth = value.round();
-                            });
+                      const SizedBox(height: 6),
+                      // Month swiper
+                      SizedBox(
+                        height: 32,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 12,
+                          itemBuilder: (context, index) {
+                            final month = index + 1;
+                            final isActive = month == _currentMonth;
+                            return GestureDetector(
+                              onTap: () {
+                                playClick();
+                                setState(() => _currentMonth = month);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: isActive
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  _getMonthName(localizations, month, useNeutral),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                                    color: isActive
+                                        ? Theme.of(context).colorScheme.onPrimary
+                                        : Theme.of(context).colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ),
