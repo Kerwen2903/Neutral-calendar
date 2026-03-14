@@ -68,9 +68,9 @@ class CalendarMonthWidget extends StatelessWidget {
             _buildWeekdayHeader(localizations.friday, calendarType,
                 isSunday: false),
             _buildWeekdayHeader(localizations.saturday, calendarType,
-                isSunday: false),
+                isSunday: false, isSaturday: true),
             _buildWeekdayHeader(localizations.sunday, calendarType,
-                isSunday: calendarType == CalendarType.neutral),
+                isSunday: calendarType == CalendarType.neutral, isSaturday: false),
           ],
         ),
         const SizedBox(height: 4),
@@ -160,6 +160,9 @@ class CalendarMonthWidget extends StatelessWidget {
                           calendarType == CalendarType.neutral &&
                               index % 7 == 6;
 
+                      // Saturday column (index % 7 == 5) — bright red
+                      final isSaturdayCell = index % 7 == 5;
+
                       // Gregorian Feb 29 — actual leap day (amber highlight)
                       final isGregorianLeapDay =
                           calendarType == CalendarType.normal &&
@@ -174,6 +177,7 @@ class CalendarMonthWidget extends StatelessWidget {
                         calendarType,
                         isLeapDay: isGregorianLeapDay,
                         isSundayHighlight: isSundayCell,
+                        isSaturdayHighlight: isSaturdayCell,
                       );
                     },
                   ),
@@ -197,9 +201,11 @@ class CalendarMonthWidget extends StatelessWidget {
   }
 
   Widget _buildWeekdayHeader(String text, CalendarType calendarType,
-      {bool isSunday = false}) {
+      {bool isSunday = false, bool isSaturday = false}) {
     Color color;
-    if (isSunday) {
+    if (isSaturday) {
+      color = Colors.red; // bright red for Saturday
+    } else if (isSunday) {
       color = const Color(0xFF8B0000); // dark red for Sunday on Neutral
     } else {
       switch (calendarType) {
@@ -276,6 +282,7 @@ class CalendarMonthWidget extends StatelessWidget {
     bool isDisabled = false,
     bool isLeapDay = false,
     bool isSundayHighlight = false, // dark red for Sunday on Neutral
+    bool isSaturdayHighlight = false, // bright red for Saturday
     VoidCallback? onTap,
   }) {
     Color? backgroundColor;
@@ -308,11 +315,15 @@ class CalendarMonthWidget extends StatelessWidget {
           : Colors.green.shade300;
     } else {
       backgroundColor = null;
-      // Sunday on Neutral calendar: dark red text
-      textColor = isSundayHighlight ? const Color(0xFF8B0000) : null;
-      borderColor = isSundayHighlight
-          ? const Color(0xFF8B0000).withValues(alpha: 0.4)
-          : Colors.grey.shade300;
+      // Saturday: bright red, Sunday on Neutral: dark red
+      textColor = isSaturdayHighlight
+          ? Colors.red
+          : (isSundayHighlight ? const Color(0xFF8B0000) : null);
+      borderColor = isSaturdayHighlight
+          ? Colors.red.withValues(alpha: 0.4)
+          : (isSundayHighlight
+              ? const Color(0xFF8B0000).withValues(alpha: 0.4)
+              : Colors.grey.shade300);
     }
 
     Widget dayText = Center(

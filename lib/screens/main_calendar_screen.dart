@@ -302,7 +302,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       _buildWeekdayHeader(localizations.wednesday),
                       _buildWeekdayHeader(localizations.thursday),
                       _buildWeekdayHeader(localizations.friday),
-                      _buildWeekdayHeader(localizations.saturday),
+                      _buildWeekdayHeader(localizations.saturday, isSaturday: true),
                       _buildWeekdayHeader(localizations.sunday, isSunday: true),
                     ],
                   ),
@@ -347,12 +347,14 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                         _selectedDate.day == day;
 
                                 final isSundayCell = index % 7 == 6;
+                                final isSaturdayCell = index % 7 == 5;
 
                                 return _buildDayCell(
                                   day,
                                   isToday,
                                   isSelected,
                                   isSundayCell: isSundayCell,
+                                  isSaturdayCell: isSaturdayCell,
                                 );
                               },
                             ),
@@ -391,7 +393,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildWeekdayHeader(String text, {bool isSunday = false}) {
+  Widget _buildWeekdayHeader(String text, {bool isSunday = false, bool isSaturday = false}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -400,9 +402,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSunday
-                ? const Color(0xFF8B0000)
-                : Theme.of(context).colorScheme.primary,
+            color: isSaturday
+                ? Colors.red
+                : (isSunday
+                    ? const Color(0xFF8B0000)
+                    : Theme.of(context).colorScheme.primary),
             fontSize: 14,
           ),
         ),
@@ -453,6 +457,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     bool isToday,
     bool isSelected, {
     bool isSundayCell = false,
+    bool isSaturdayCell = false,
   }) {
     Color backgroundColor;
     Color textColor;
@@ -474,9 +479,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = isSundayCell
-          ? const Color(0xFF8B0000)
-          : Theme.of(context).colorScheme.onSurface;
+      textColor = isSaturdayCell
+          ? Colors.red
+          : (isSundayCell
+              ? const Color(0xFF8B0000)
+              : Theme.of(context).colorScheme.onSurface);
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -646,23 +653,25 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
               // Weekday headers
               Row(
                 children: [
-                  for (final wd in [
-                    localizations.monday,
-                    localizations.tuesday,
-                    localizations.wednesday,
-                    localizations.thursday,
-                    localizations.friday,
-                    localizations.saturday,
-                    localizations.sunday,
+                  for (final entry in [
+                    (localizations.monday, false),
+                    (localizations.tuesday, false),
+                    (localizations.wednesday, false),
+                    (localizations.thursday, false),
+                    (localizations.friday, false),
+                    (localizations.saturday, true),
+                    (localizations.sunday, false),
                   ])
                     Expanded(
                       child: Text(
-                        wd.substring(0, 1),
+                        entry.$1.substring(0, 1),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 6,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: entry.$2
+                              ? Colors.red
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -712,6 +721,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     final isToday = DateTime.now().year == _currentYear &&
                         DateTime.now().month == month &&
                         DateTime.now().day == day;
+                    final isSat = index % 7 == 5;
 
                     return Container(
                       margin: const EdgeInsets.all(1),
@@ -728,10 +738,12 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                             fontSize: 8,
                             color: isToday
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.7),
+                                : (isSat
+                                    ? Colors.red.withValues(alpha: 0.8)
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.7)),
                             fontWeight:
                                 isToday ? FontWeight.bold : FontWeight.normal,
                           ),

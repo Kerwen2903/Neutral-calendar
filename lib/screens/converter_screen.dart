@@ -535,6 +535,7 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                       _getWeekdayName(localizations, index)[0],
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: index == 6 ? Colors.red : null, // Saturday
                       ),
                     ),
                   ),
@@ -562,6 +563,8 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                       dayNumber == _selectedDay &&
                       _currentMonth == widget.initialDate.month &&
                       _currentYear == widget.initialDate.year;
+
+                  final isSatCol = index % 7 == 6;
 
                   return InkWell(
                     onTap: () {
@@ -592,7 +595,9 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                           style: TextStyle(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
+                                : (isSatCol
+                                    ? Colors.red
+                                    : Theme.of(context).colorScheme.onSurface),
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
