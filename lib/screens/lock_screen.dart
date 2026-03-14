@@ -62,6 +62,8 @@ class _LockScreenState extends State<LockScreen>
 
   void _dismiss() {
     if (_dismissed) return;
+    SystemSound.play(SystemSoundType.click);
+    HapticFeedback.lightImpact();
     _slideCtrl.forward().then((_) {
       if (!mounted) return;
       if (widget.standaloneRoute) {
@@ -210,20 +212,6 @@ class _LockScreenState extends State<LockScreen>
 
                     const Spacer(flex: 3),
 
-                    // ── Battery row ────────────────────────────────────
-                    Row(
-                      children: [
-                        _BatteryIcon(color: Colors.white70),
-                        const SizedBox(width: 6),
-                        const Text(
-                          '99 %',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
                     // ── Swipe up hint ──────────────────────────────────
                     const Text(
                       '↑  tap or swipe up',
@@ -243,67 +231,4 @@ class _LockScreenState extends State<LockScreen>
       ),
     );
   }
-}
-
-// ── Simple battery icon drawn with Canvas ─────────────────────────────────────
-class _BatteryIcon extends StatelessWidget {
-  final Color color;
-  const _BatteryIcon({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(28, 14),
-      painter: _BatteryPainter(color: color, level: 0.99),
-    );
-  }
-}
-
-class _BatteryPainter extends CustomPainter {
-  final Color color;
-  final double level; // 0..1
-  const _BatteryPainter({required this.color, required this.level});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1.2
-      ..style = PaintingStyle.stroke;
-
-    // Body
-    final body = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 1, size.width - 4, size.height - 2),
-      const Radius.circular(2),
-    );
-    canvas.drawRRect(body, paint);
-
-    // Terminal nub
-    final nubPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width - 3.5, size.height / 2 - 2.5, 3.5, 5),
-        const Radius.circular(1),
-      ),
-      nubPaint,
-    );
-
-    // Fill
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    final fillW = (size.width - 8) * level;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(2, 3, fillW, size.height - 6),
-        const Radius.circular(1),
-      ),
-      fillPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_BatteryPainter old) => old.level != level;
 }

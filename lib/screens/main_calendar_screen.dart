@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
+import '../utils/click_sound.dart';
 import 'lock_screen.dart';
 
 class MainCalendarScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _previousMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 1) {
         _currentMonth = 12;
@@ -36,6 +38,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _nextMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 12) {
         _currentMonth = 1;
@@ -47,6 +50,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _goToToday() {
+    playClick();
     setState(() {
       _currentYear = DateTime.now().year;
       _currentMonth = DateTime.now().month;
@@ -55,18 +59,21 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _previousYear() {
+    playClick();
     setState(() {
       _currentYear--;
     });
   }
 
   void _nextYear() {
+    playClick();
     setState(() {
       _currentYear++;
     });
   }
 
   void _toggleView() {
+    playClick();
     setState(() {
       _isYearView = !_isYearView;
     });
@@ -179,7 +186,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.phone_android),
-            onPressed: () => Navigator.of(context).push(
+            onPressed: () { playClick(); Navigator.of(context).push(
               PageRouteBuilder(
                 opaque: false,
                 pageBuilder: (_, __, ___) => LockScreen(
@@ -188,7 +195,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 ),
                 transitionDuration: Duration.zero,
               ),
-            ),
+            ); },
             tooltip: localizations.lockScreen,
           ),
         ],
@@ -201,7 +208,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
-                    vertical: 16,
+                    vertical: 10,
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
@@ -213,53 +220,73 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left, size: 32),
-                        onPressed: _previousMonth,
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
+                          _circleArrow(Icons.chevron_left, _previousMonth),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
+                                    ),
+                              ),
+                              if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
+                                Container(
+                                  margin: const EdgeInsets.only(top: 3),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.shade400,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    '✦ Leap Year',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange.shade900,
+                                    ),
+                                  ),
                                 ),
+                            ],
                           ),
-                          if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
-                            Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.shade400,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                '✦ Leap Year',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange.shade900,
-                                ),
-                              ),
-                            ),
+                          _circleArrow(Icons.chevron_right, _nextMonth),
                         ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right, size: 32),
-                        onPressed: _nextMonth,
+                      const SizedBox(height: 8),
+                      // Month slider
+                      SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 3,
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                        ),
+                        child: Slider(
+                          value: _currentMonth.toDouble(),
+                          min: 1,
+                          max: 12,
+                          divisions: 11,
+                          label: _getMonthName(localizations, _currentMonth, useNeutral),
+                          onChanged: (value) {
+                            playClick();
+                            setState(() {
+                              _currentMonth = value.round();
+                            });
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -275,7 +302,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       _buildWeekdayHeader(localizations.wednesday),
                       _buildWeekdayHeader(localizations.thursday),
                       _buildWeekdayHeader(localizations.friday),
-                      _buildWeekdayHeader(localizations.saturday),
+                      _buildWeekdayHeader(localizations.saturday, isSaturday: true),
                       _buildWeekdayHeader(localizations.sunday, isSunday: true),
                     ],
                   ),
@@ -320,12 +347,14 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                         _selectedDate.day == day;
 
                                 final isSundayCell = index % 7 == 6;
+                                final isSaturdayCell = index % 7 == 5;
 
                                 return _buildDayCell(
                                   day,
                                   isToday,
                                   isSelected,
                                   isSundayCell: isSundayCell,
+                                  isSaturdayCell: isSaturdayCell,
                                 );
                               },
                             ),
@@ -349,7 +378,22 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildWeekdayHeader(String text, {bool isSunday = false}) {
+  Widget _circleArrow(IconData icon, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 24),
+        onPressed: onPressed,
+        padding: const EdgeInsets.all(6),
+        constraints: const BoxConstraints(),
+      ),
+    );
+  }
+
+  Widget _buildWeekdayHeader(String text, {bool isSunday = false, bool isSaturday = false}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -358,9 +402,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSunday
-                ? const Color(0xFF8B0000)
-                : Theme.of(context).colorScheme.primary,
+            color: isSaturday
+                ? Colors.red
+                : (isSunday
+                    ? const Color(0xFF8B0000)
+                    : Theme.of(context).colorScheme.primary),
             fontSize: 14,
           ),
         ),
@@ -411,6 +457,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     bool isToday,
     bool isSelected, {
     bool isSundayCell = false,
+    bool isSaturdayCell = false,
   }) {
     Color backgroundColor;
     Color textColor;
@@ -432,9 +479,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = isSundayCell
-          ? const Color(0xFF8B0000)
-          : Theme.of(context).colorScheme.onSurface;
+      textColor = isSaturdayCell
+          ? Colors.red
+          : (isSundayCell
+              ? const Color(0xFF8B0000)
+              : Theme.of(context).colorScheme.onSurface);
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -443,6 +492,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
     return InkWell(
       onTap: () {
+        playClick();
         setState(() {
           _selectedDate = DateTime(_currentYear, _currentMonth, day);
         });
@@ -470,7 +520,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       children: [
         // Year navigation header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primaryContainer,
             boxShadow: [
@@ -484,16 +534,13 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left, size: 32),
-                onPressed: _previousYear,
-              ),
+              _circleArrow(Icons.chevron_left, _previousYear),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     '$_currentYear',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color:
                               Theme.of(context).colorScheme.onPrimaryContainer,
@@ -522,10 +569,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                   ],
                 ],
               ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right, size: 32),
-                onPressed: _nextYear,
-              ),
+              _circleArrow(Icons.chevron_right, _nextYear),
             ],
           ),
         ),
@@ -576,6 +620,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
     return InkWell(
       onTap: () {
+        playClick();
         setState(() {
           _currentMonth = month;
           _isYearView = false;
@@ -604,7 +649,35 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                           : null,
                     ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
+              // Weekday headers
+              Row(
+                children: [
+                  for (final entry in [
+                    (localizations.monday, false),
+                    (localizations.tuesday, false),
+                    (localizations.wednesday, false),
+                    (localizations.thursday, false),
+                    (localizations.friday, false),
+                    (localizations.saturday, true),
+                    (localizations.sunday, false),
+                  ])
+                    Expanded(
+                      child: Text(
+                        entry.$1.substring(0, 1),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 6,
+                          fontWeight: FontWeight.bold,
+                          color: entry.$2
+                              ? Colors.red
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 1),
               // Mini calendar grid
               Expanded(
                 child: GridView.builder(
@@ -648,6 +721,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     final isToday = DateTime.now().year == _currentYear &&
                         DateTime.now().month == month &&
                         DateTime.now().day == day;
+                    final isSat = index % 7 == 5;
 
                     return Container(
                       margin: const EdgeInsets.all(1),
@@ -664,10 +738,12 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                             fontSize: 8,
                             color: isToday
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.7),
+                                : (isSat
+                                    ? Colors.red.withValues(alpha: 0.8)
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.7)),
                             fontWeight:
                                 isToday ? FontWeight.bold : FontWeight.normal,
                           ),

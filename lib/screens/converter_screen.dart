@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
+import '../utils/click_sound.dart';
 import '../models/calendar_date.dart';
 import '../models/calendar_type.dart';
 import '../services/calendar_converter.dart';
@@ -141,6 +142,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
   }
 
   void _convertDate() {
+    playClick();
     final sourceDate = _getDisplayDate();
 
     setState(() {
@@ -261,6 +263,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                       ],
                       selected: {_sourceCalendar},
                       onSelectionChanged: (Set<CalendarType> newSelection) {
+                        playClick();
                         setState(() {
                           _sourceCalendar = newSelection.first;
                           _convertedDate = null;
@@ -276,7 +279,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
             // Date Selection
             Card(
               child: InkWell(
-                onTap: () => _selectDate(context),
+                onTap: () { playClick(); _selectDate(context); },
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -294,7 +297,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _formatDate(localizations, _getDisplayDate()),
-                        style: Theme.of(context).textTheme.headlineMedium
+                        style: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.primary,
@@ -340,7 +343,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _formatDate(localizations, _convertedDate!),
-                        style: Theme.of(context).textTheme.headlineMedium
+                        style: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.green.shade700,
@@ -382,6 +385,7 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
   }
 
   void _previousMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 1) {
         _currentMonth = 12;
@@ -393,6 +397,7 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
   }
 
   void _nextMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 12) {
         _currentMonth = 1;
@@ -489,17 +494,33 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: _previousMonth,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_left, size: 22),
+                    onPressed: _previousMonth,
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                  ),
                 ),
                 Text(
                   '${_getMonthName(localizations, _currentMonth)} $_currentYear',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: _nextMonth,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_right, size: 22),
+                    onPressed: _nextMonth,
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                  ),
                 ),
               ],
             ),
@@ -514,6 +535,7 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                       _getWeekdayName(localizations, index)[0],
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: index == 6 ? Colors.red : null, // Saturday
                       ),
                     ),
                   ),
@@ -542,8 +564,11 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                       _currentMonth == widget.initialDate.month &&
                       _currentYear == widget.initialDate.year;
 
+                  final isSatCol = index % 7 == 6;
+
                   return InkWell(
                     onTap: () {
+                      playClick();
                       setState(() {
                         _selectedDay = dayNumber;
                       });
@@ -570,7 +595,9 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
                           style: TextStyle(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
+                                : (isSatCol
+                                    ? Colors.red
+                                    : Theme.of(context).colorScheme.onSurface),
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -588,7 +615,7 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () { playClick(); Navigator.of(context).pop(); },
                   child: const Text('Cancel'),
                 ),
               ],
