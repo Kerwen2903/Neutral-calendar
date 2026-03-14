@@ -21,10 +21,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   int _neutralMonth = DateTime.now().month;
   CalendarDate? _selectedNormalDate;
   CalendarDate? _selectedNeutralDate;
+  bool _slideForward = true;
 
   void _previousMonth() {
     playClick();
     setState(() {
+      _slideForward = false;
       // Navigate both calendars to previous month
       if (_normalMonth == 1) {
         _normalMonth = 12;
@@ -46,6 +48,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   void _nextMonth() {
     playClick();
     setState(() {
+      _slideForward = true;
       // Navigate both calendars to next month
       if (_normalMonth == 12) {
         _normalMonth = 1;
@@ -214,10 +217,26 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               children: [
                 _circleArrow(Icons.chevron_left, _previousMonth),
                 Expanded(
-                  child: Text(
-                    '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    transitionBuilder: (child, animation) {
+                      final offsetTween = Tween<Offset>(
+                        begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                        end: Offset.zero,
+                      );
+                      return SlideTransition(
+                        position: offsetTween.animate(
+                          CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                        ),
+                        child: child,
+                      );
+                    },
+                    child: Text(
+                      '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
+                      key: ValueKey('$_normalYear-$_normalMonth-$_neutralYear-$_neutralMonth'),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 _circleArrow(Icons.chevron_right, _nextMonth),
@@ -225,94 +244,113 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 4.0,
-              ),
-              child: Column(
-                children: [
-                  // Normal Calendar
-                  Expanded(
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${localizations.normalCalendar} - ${_getMonthName(localizations, _normalMonth, false)}',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Colors.blue.shade700,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 4),
-                            Expanded(
-                              child: CalendarMonthWidget(
-                                year: _normalYear,
-                                month: _normalMonth,
-                                calendarType: CalendarType.normal,
-                                selectedDay:
-                                    _selectedNormalDate?.year == _normalYear &&
-                                        _selectedNormalDate?.month ==
-                                            _normalMonth
-                                    ? _selectedNormalDate?.day
-                                    : null,
-                                onDaySelected: _onNormalDaySelected,
-                                onPreviousMonthDaySelected:
-                                    _onNormalPreviousMonthDaySelected,
-                                onNextMonthDaySelected:
-                                    _onNormalNextMonthDaySelected,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                final offsetTween = Tween<Offset>(
+                  begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                  end: Offset.zero,
+                );
+                return SlideTransition(
+                  position: offsetTween.animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                  ),
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: Padding(
+                key: ValueKey('comp-$_normalYear-$_normalMonth-$_neutralYear-$_neutralMonth'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
+                  vertical: 4.0,
+                ),
+                child: Column(
+                  children: [
+                    // Normal Calendar
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                '${localizations.normalCalendar} - ${_getMonthName(localizations, _normalMonth, false)}',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Colors.blue.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Expanded(
+                                child: CalendarMonthWidget(
+                                  year: _normalYear,
+                                  month: _normalMonth,
+                                  calendarType: CalendarType.normal,
+                                  selectedDay:
+                                      _selectedNormalDate?.year == _normalYear &&
+                                          _selectedNormalDate?.month ==
+                                              _normalMonth
+                                      ? _selectedNormalDate?.day
+                                      : null,
+                                  onDaySelected: _onNormalDaySelected,
+                                  onPreviousMonthDaySelected:
+                                      _onNormalPreviousMonthDaySelected,
+                                  onNextMonthDaySelected:
+                                      _onNormalNextMonthDaySelected,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Neutral Calendar
-                  Expanded(
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${localizations.neutralCalendar} - ${_getMonthName(localizations, _neutralMonth, true)}',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Colors.green.shade700,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 4),
-                            Expanded(
-                              child: CalendarMonthWidget(
-                                year: _neutralYear,
-                                month: _neutralMonth,
-                                calendarType: CalendarType.neutral,
-                                selectedDay:
-                                    _selectedNeutralDate?.year ==
-                                            _neutralYear &&
-                                        _selectedNeutralDate?.month ==
-                                            _neutralMonth
-                                    ? _selectedNeutralDate?.day
-                                    : null,
-                                onDaySelected: _onNeutralDaySelected,
-                                onPreviousMonthDaySelected:
-                                    _onNeutralPreviousMonthDaySelected,
-                                onNextMonthDaySelected:
-                                    _onNeutralNextMonthDaySelected,
+                    const SizedBox(height: 4),
+                    // Neutral Calendar
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                '${localizations.neutralCalendar} - ${_getMonthName(localizations, _neutralMonth, true)}',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Colors.green.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Expanded(
+                                child: CalendarMonthWidget(
+                                  year: _neutralYear,
+                                  month: _neutralMonth,
+                                  calendarType: CalendarType.neutral,
+                                  selectedDay:
+                                      _selectedNeutralDate?.year ==
+                                              _neutralYear &&
+                                          _selectedNeutralDate?.month ==
+                                              _neutralMonth
+                                      ? _selectedNeutralDate?.day
+                                      : null,
+                                  onDaySelected: _onNeutralDaySelected,
+                                  onPreviousMonthDaySelected:
+                                      _onNeutralPreviousMonthDaySelected,
+                                  onNextMonthDaySelected:
+                                      _onNeutralNextMonthDaySelected,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -17,6 +17,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   late int _currentMonth;
   DateTime _selectedDate = DateTime.now();
   bool _isYearView = false;
+  bool _slideForward = true; // animation direction
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   void _previousMonth() {
     playClick();
     setState(() {
+      _slideForward = false;
       if (_currentMonth == 1) {
         _currentMonth = 12;
         _currentYear--;
@@ -40,6 +42,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   void _nextMonth() {
     playClick();
     setState(() {
+      _slideForward = true;
       if (_currentMonth == 12) {
         _currentMonth = 1;
         _currentYear++;
@@ -236,17 +239,33 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            transitionBuilder: (child, animation) {
+                              final offsetTween = Tween<Offset>(
+                                begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                                end: Offset.zero,
+                              );
+                              return SlideTransition(
+                                position: offsetTween.animate(
+                                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
                                 ),
+                                child: child,
+                              );
+                            },
+                            child: Text(
+                              '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
+                              key: ValueKey('$_currentYear-$_currentMonth'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
+                                  ),
+                            ),
                           ),
                           if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
                             Container(
@@ -291,69 +310,88 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                   ),
                 ),
 
-                // Calendar grid
+                // Calendar grid with animation
                 Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final cellSize = (constraints.maxWidth - 16 - 4 * 6) / 7;
-                      final gridRows =
-                          ((firstWeekday + daysInMonth) / 7).ceil();
-
-                      return Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Stack(
-                          children: [
-                            GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 7,
-                                childAspectRatio: 1,
-                                crossAxisSpacing: 4,
-                                mainAxisSpacing: 4,
-                              ),
-                              itemCount: firstWeekday + daysInMonth,
-                              itemBuilder: (context, index) {
-                                if (index < firstWeekday) {
-                                  return const SizedBox();
-                                }
-
-                                final day = index - firstWeekday + 1;
-                                final isToday =
-                                    DateTime.now().year == _currentYear &&
-                                        DateTime.now().month == _currentMonth &&
-                                        DateTime.now().day == day;
-
-                                final isSelected =
-                                    _selectedDate.year == _currentYear &&
-                                        _selectedDate.month == _currentMonth &&
-                                        _selectedDate.day == day;
-
-                                final isSundayCell = index % 7 == 6;
-                                final isSaturdayCell = index % 7 == 5;
-
-                                return _buildDayCell(
-                                  day,
-                                  isToday,
-                                  isSelected,
-                                  isSundayCell: isSundayCell,
-                                  isSaturdayCell: isSaturdayCell,
-                                );
-                              },
-                            ),
-                            // Neutral Feb 31 — visual-only, placed between Thu & Fri below last row
-                            if (isNeutralLeapFeb)
-                              Positioned(
-                                top: gridRows * (cellSize + 4),
-                                left: 3.4 * (cellSize + 4),
-                                width: cellSize,
-                                height: cellSize * 0.9,
-                                child: _buildLeapDay31Cell(),
-                              ),
-                          ],
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) {
+                      final offsetTween = Tween<Offset>(
+                        begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                        end: Offset.zero,
+                      );
+                      return SlideTransition(
+                        position: offsetTween.animate(
+                          CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                        ),
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
                         ),
                       );
                     },
+                    child: LayoutBuilder(
+                      key: ValueKey('grid-$_currentYear-$_currentMonth'),
+                      builder: (context, constraints) {
+                        final cellSize = (constraints.maxWidth - 16 - 4 * 6) / 7;
+                        final gridRows =
+                            ((firstWeekday + daysInMonth) / 7).ceil();
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Stack(
+                            children: [
+                              GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 7,
+                                  childAspectRatio: 1,
+                                  crossAxisSpacing: 4,
+                                  mainAxisSpacing: 4,
+                                ),
+                                itemCount: firstWeekday + daysInMonth,
+                                itemBuilder: (context, index) {
+                                  if (index < firstWeekday) {
+                                    return const SizedBox();
+                                  }
+
+                                  final day = index - firstWeekday + 1;
+                                  final isToday =
+                                      DateTime.now().year == _currentYear &&
+                                          DateTime.now().month == _currentMonth &&
+                                          DateTime.now().day == day;
+
+                                  final isSelected =
+                                      _selectedDate.year == _currentYear &&
+                                          _selectedDate.month == _currentMonth &&
+                                          _selectedDate.day == day;
+
+                                  final isSundayCell = index % 7 == 6;
+                                  final isSaturdayCell = index % 7 == 5;
+
+                                  return _buildDayCell(
+                                    day,
+                                    isToday,
+                                    isSelected,
+                                    isSundayCell: isSundayCell,
+                                    isSaturdayCell: isSaturdayCell,
+                                  );
+                                },
+                              ),
+                              // Neutral Feb 31 — visual-only, placed between Thu & Fri below last row
+                              if (isNeutralLeapFeb)
+                                Positioned(
+                                  top: gridRows * (cellSize + 4),
+                                  left: 3.4 * (cellSize + 4),
+                                  width: cellSize,
+                                  height: cellSize * 0.9,
+                                  child: _buildLeapDay31Cell(),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
