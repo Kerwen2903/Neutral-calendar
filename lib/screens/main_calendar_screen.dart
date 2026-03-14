@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
+import '../models/calendar_date.dart';
+import '../models/calendar_type.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
 import '../utils/click_sound.dart';
@@ -22,8 +24,17 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   @override
   void initState() {
     super.initState();
-    _currentYear = DateTime.now().year;
-    _currentMonth = DateTime.now().month;
+    final now = DateTime.now();
+    final todayNeutral = CalendarConverter.normalToNeutral(
+      CalendarDate(
+        year: now.year,
+        month: now.month,
+        day: now.day,
+        calendarType: CalendarType.normal,
+      ),
+    );
+    _currentYear = todayNeutral.year;
+    _currentMonth = todayNeutral.month;
   }
 
   void _previousMonth() {
@@ -54,10 +65,19 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
   void _goToToday() {
     playClick();
+    final now = DateTime.now();
+    final todayNeutral = CalendarConverter.normalToNeutral(
+      CalendarDate(
+        year: now.year,
+        month: now.month,
+        day: now.day,
+        calendarType: CalendarType.normal,
+      ),
+    );
     setState(() {
-      _currentYear = DateTime.now().year;
-      _currentMonth = DateTime.now().month;
-      _selectedDate = DateTime.now();
+      _currentYear = todayNeutral.year;
+      _currentMonth = todayNeutral.month;
+      _selectedDate = DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
     });
   }
 
@@ -154,6 +174,17 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     final appState = NeutralCalendarApp.of(context);
     final useNeutral = appState?.useNeutralMonthNames ?? true;
 
+    // Convert today's Gregorian date to Neutral calendar for correct "today" highlighting
+    final now = DateTime.now();
+    final todayNeutral = CalendarConverter.normalToNeutral(
+      CalendarDate(
+        year: now.year,
+        month: now.month,
+        day: now.day,
+        calendarType: CalendarType.normal,
+      ),
+    );
+
     // Get days in month for Neutral calendar (calculation value, stays 30 for Feb)
     final daysInMonth = CalendarConverter.getDaysInMonthNeutral(
       _currentYear,
@@ -204,7 +235,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
         ],
       ),
       body: _isYearView
-          ? _buildYearView(localizations, useNeutral)
+          ? _buildYearView(localizations, useNeutral, todayNeutral)
           : GestureDetector(
               onHorizontalDragEnd: (details) {
                 if (details.primaryVelocity == null) return;
@@ -381,9 +412,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
                                   final day = index - firstWeekday + 1;
                                   final isToday =
-                                      DateTime.now().year == _currentYear &&
-                                          DateTime.now().month == _currentMonth &&
-                                          DateTime.now().day == day;
+                                      todayNeutral.year == _currentYear &&
+                                          todayNeutral.month == _currentMonth &&
+                                          todayNeutral.day == day;
 
                                   final isSelected =
                                       _selectedDate.year == _currentYear &&
@@ -554,7 +585,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildYearView(AppLocalizations localizations, bool useNeutral) {
+  Widget _buildYearView(AppLocalizations localizations, bool useNeutral, CalendarDate todayNeutral) {
     return Column(
       children: [
         // Year navigation header
@@ -626,7 +657,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
               itemCount: 12,
               itemBuilder: (context, index) {
                 final month = index + 1;
-                return _buildMonthCard(month, localizations, useNeutral);
+                return _buildMonthCard(month, localizations, useNeutral, todayNeutral);
               },
             ),
           ),
@@ -639,6 +670,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     int month,
     AppLocalizations localizations,
     bool useNeutral,
+    CalendarDate todayNeutral,
   ) {
     final daysInMonth = CalendarConverter.getDaysInMonthNeutral(
       _currentYear,
@@ -655,7 +687,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     final displayDaysInMonth = daysInMonth + (isLeapFeb ? 1 : 0);
 
     final isCurrentMonth =
-        DateTime.now().year == _currentYear && DateTime.now().month == month;
+        todayNeutral.year == _currentYear && todayNeutral.month == month;
 
     return InkWell(
       onTap: () {
@@ -757,9 +789,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     }
 
                     final day = index - firstWeekday + 1;
-                    final isToday = DateTime.now().year == _currentYear &&
-                        DateTime.now().month == month &&
-                        DateTime.now().day == day;
+                    final isToday = todayNeutral.year == _currentYear &&
+                        todayNeutral.month == month &&
+                        todayNeutral.day == day;
                     final isSun = index % 7 == 6;
 
                     return Container(
