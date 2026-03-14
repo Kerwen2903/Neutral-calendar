@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
+import '../utils/click_sound.dart';
 import 'main_calendar_screen.dart';
 import 'comparison_screen.dart';
 import 'converter_screen.dart';
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     : colorScheme.onSurface.withValues(alpha: 0.55);
                 return Expanded(
                   child: InkWell(
-                    onTap: () => setState(() => _selectedIndex = i),
+                    onTap: () { playClick(); setState(() => _selectedIndex = i); },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
+import '../utils/click_sound.dart';
 import '../widgets/calendar_month_widget.dart';
 import '../models/calendar_type.dart';
 import '../models/calendar_date.dart';
@@ -22,6 +23,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   CalendarDate? _selectedNeutralDate;
 
   void _previousMonth() {
+    playClick();
     setState(() {
       // Navigate both calendars to previous month
       if (_normalMonth == 1) {
@@ -42,6 +44,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   }
 
   void _nextMonth() {
+    playClick();
     setState(() {
       // Navigate both calendars to next month
       if (_normalMonth == 12) {
@@ -180,6 +183,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           IconButton(
             icon: const Icon(Icons.today),
             onPressed: () {
+              playClick();
               setState(() {
                 _normalYear = DateTime.now().year;
                 _normalMonth = DateTime.now().month;

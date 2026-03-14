@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../main.dart';
+import '../utils/click_sound.dart';
 import 'lock_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -49,6 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 title: const Text('Русский'),
                 onTap: () {
+                  playClick();
                   appState.setLocale(const Locale('ru'));
                   Navigator.pop(dialogContext);
                   setState(() {});
@@ -65,6 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 title: const Text('Türkmen'),
                 onTap: () {
+                  playClick();
                   appState.setLocale(const Locale('tk'));
                   Navigator.pop(dialogContext);
                   setState(() {});
@@ -81,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 title: const Text('English'),
                 onTap: () {
+                  playClick();
                   appState.setLocale(const Locale('en'));
                   Navigator.pop(dialogContext);
                   setState(() {});
@@ -113,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text(localizations.language),
             subtitle: Text(_getCurrentLanguageName(currentLocale)),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLanguageDialog(context),
+            onTap: () { playClick(); _showLanguageDialog(context); },
           ),
           const Divider(),
           ListTile(
@@ -127,6 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: appState?.isDarkMode ?? false,
               onChanged: (value) {
+                playClick();
                 appState?.toggleTheme(value);
                 setState(() {});
               },
@@ -144,6 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: appState?.useNeutralMonthNames ?? true,
               onChanged: (value) {
+                playClick();
                 appState?.toggleMonthNames(value);
                 setState(() {});
               },
@@ -153,14 +159,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(localizations.aboutCalendar),
-            onTap: () {
+            onTap: () { playClick();
               // TODO: Show info about the calendar system
             },
           ),
           ListTile(
             leading: const Icon(Icons.help_outline),
             title: Text(localizations.howToUse),
-            onTap: () {
+            onTap: () { playClick();
               // TODO: Show usage guide
             },
           ),
@@ -188,6 +194,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         (appState?.lockScreenColorIndex ?? 0) == i;
                     return GestureDetector(
                       onTap: () {
+                        playClick();
                         appState?.setLockScreenColor(i);
                         setState(() {});
                       },

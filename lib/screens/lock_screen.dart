@@ -62,6 +62,8 @@ class _LockScreenState extends State<LockScreen>
 
   void _dismiss() {
     if (_dismissed) return;
+    SystemSound.play(SystemSoundType.click);
+    HapticFeedback.lightImpact();
     _slideCtrl.forward().then((_) {
       if (!mounted) return;
       if (widget.standaloneRoute) {

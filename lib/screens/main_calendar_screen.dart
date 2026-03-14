@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
+import '../utils/click_sound.dart';
 import 'lock_screen.dart';
 
 class MainCalendarScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _previousMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 1) {
         _currentMonth = 12;
@@ -36,6 +38,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _nextMonth() {
+    playClick();
     setState(() {
       if (_currentMonth == 12) {
         _currentMonth = 1;
@@ -47,6 +50,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _goToToday() {
+    playClick();
     setState(() {
       _currentYear = DateTime.now().year;
       _currentMonth = DateTime.now().month;
@@ -55,18 +59,21 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
   }
 
   void _previousYear() {
+    playClick();
     setState(() {
       _currentYear--;
     });
   }
 
   void _nextYear() {
+    playClick();
     setState(() {
       _currentYear++;
     });
   }
 
   void _toggleView() {
+    playClick();
     setState(() {
       _isYearView = !_isYearView;
     });
@@ -179,7 +186,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.phone_android),
-            onPressed: () => Navigator.of(context).push(
+            onPressed: () { playClick(); Navigator.of(context).push(
               PageRouteBuilder(
                 opaque: false,
                 pageBuilder: (_, __, ___) => LockScreen(
@@ -188,7 +195,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 ),
                 transitionDuration: Duration.zero,
               ),
-            ),
+            ); },
             tooltip: localizations.lockScreen,
           ),
         ],
@@ -443,6 +450,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
     return InkWell(
       onTap: () {
+        playClick();
         setState(() {
           _selectedDate = DateTime(_currentYear, _currentMonth, day);
         });
@@ -576,6 +584,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
 
     return InkWell(
       onTap: () {
+        playClick();
         setState(() {
           _currentMonth = month;
           _isYearView = false;

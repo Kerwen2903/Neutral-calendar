@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
+import '../utils/click_sound.dart';
 import '../models/calendar_type.dart';
 import '../services/calendar_converter.dart';
 
@@ -351,8 +352,8 @@ class CalendarMonthWidget extends StatelessWidget {
 
     return InkWell(
       onTap: isDisabled
-          ? onTap
-          : (onDaySelected != null ? () => onDaySelected!(day) : null),
+          ? (onTap != null ? () { playClick(); onTap!(); } : null)
+          : (onDaySelected != null ? () { playClick(); onDaySelected!(day); } : null),
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
