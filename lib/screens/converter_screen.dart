@@ -297,7 +297,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _formatDate(localizations, _getDisplayDate()),
-                        style: Theme.of(context).textTheme.headlineMedium
+                        style: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.primary,
@@ -343,7 +343,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _formatDate(localizations, _convertedDate!),
-                        style: Theme.of(context).textTheme.headlineMedium
+                        style: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.green.shade700,
@@ -494,17 +494,33 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: _previousMonth,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_left, size: 22),
+                    onPressed: _previousMonth,
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                  ),
                 ),
                 Text(
                   '${_getMonthName(localizations, _currentMonth)} $_currentYear',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: _nextMonth,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_right, size: 22),
+                    onPressed: _nextMonth,
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                  ),
                 ),
               ],
             ),

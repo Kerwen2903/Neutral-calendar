@@ -199,22 +199,47 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         children: [
           // Month navigation
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Column(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: _previousMonth,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _circleArrow(Icons.chevron_left, _previousMonth),
+                    Expanded(
+                      child: Text(
+                        '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    _circleArrow(Icons.chevron_right, _nextMonth),
+                  ],
                 ),
-                Text(
-                  '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: _nextMonth,
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 3,
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                  ),
+                  child: Slider(
+                    value: _normalMonth.toDouble(),
+                    min: 1,
+                    max: 12,
+                    divisions: 11,
+                    label: _getMonthName(localizations, _normalMonth, false),
+                    onChanged: (value) {
+                      playClick();
+                      final newMonth = value.round();
+                      final diff = newMonth - _normalMonth;
+                      setState(() {
+                        _normalMonth = newMonth;
+                        _neutralMonth = ((_neutralMonth + diff - 1) % 12) + 1;
+                        _selectedNormalDate = null;
+                        _selectedNeutralDate = null;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
@@ -236,7 +261,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           children: [
                             Text(
                               '${localizations.normalCalendar} - ${_getMonthName(localizations, _normalMonth, false)}',
-                              style: Theme.of(context).textTheme.titleSmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Colors.blue.shade700,
                                     fontWeight: FontWeight.bold,
@@ -276,7 +301,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           children: [
                             Text(
                               '${localizations.neutralCalendar} - ${_getMonthName(localizations, _neutralMonth, true)}',
-                              style: Theme.of(context).textTheme.titleSmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Colors.green.shade700,
                                     fontWeight: FontWeight.bold,
@@ -312,6 +337,21 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _circleArrow(IconData icon, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 22),
+        onPressed: onPressed,
+        padding: const EdgeInsets.all(6),
+        constraints: const BoxConstraints(),
       ),
     );
   }
