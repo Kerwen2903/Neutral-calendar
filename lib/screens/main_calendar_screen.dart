@@ -240,17 +240,31 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 250),
+                            duration: const Duration(milliseconds: 300),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            layoutBuilder: (currentChild, previousChildren) {
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ...previousChildren,
+                                  if (currentChild != null) currentChild,
+                                ],
+                              );
+                            },
                             transitionBuilder: (child, animation) {
+                              final isIncoming = animation.status == AnimationStatus.forward ||
+                                  animation.status == AnimationStatus.completed;
                               final offsetTween = Tween<Offset>(
-                                begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                                begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
                                 end: Offset.zero,
                               );
                               return SlideTransition(
-                                position: offsetTween.animate(
-                                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                                position: offsetTween.animate(animation),
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
                                 ),
-                                child: child,
                               );
                             },
                             child: Text(
@@ -314,15 +328,25 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 Expanded(
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    layoutBuilder: (currentChild, previousChildren) {
+                      return Stack(
+                        children: [
+                          ...previousChildren,
+                          if (currentChild != null) currentChild,
+                        ],
+                      );
+                    },
                     transitionBuilder: (child, animation) {
+                      final isIncoming = animation.status == AnimationStatus.forward ||
+                          animation.status == AnimationStatus.completed;
                       final offsetTween = Tween<Offset>(
-                        begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                        begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
                         end: Offset.zero,
                       );
                       return SlideTransition(
-                        position: offsetTween.animate(
-                          CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                        ),
+                        position: offsetTween.animate(animation),
                         child: FadeTransition(
                           opacity: animation,
                           child: child,

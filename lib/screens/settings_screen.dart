@@ -137,24 +137,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.calendar_month),
-            title: Text(localizations.monthNames),
-            subtitle: Text(
-              appState?.useNeutralMonthNames ?? true
-                  ? localizations.neutralMonths
-                  : localizations.gregorianMonths,
-            ),
-            trailing: Switch(
-              value: appState?.useNeutralMonthNames ?? true,
-              onChanged: (value) {
-                playClick();
-                appState?.toggleMonthNames(value);
-                setState(() {});
-              },
-            ),
-          ),
+          // const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.calendar_month),
+          //   title: Text(localizations.monthNames),
+          //   subtitle: Text(
+          //     appState?.useNeutralMonthNames ?? true
+          //         ? localizations.neutralMonths
+          //         : localizations.gregorianMonths,
+          //   ),
+          //   trailing: Switch(
+          //     value: appState?.useNeutralMonthNames ?? true,
+          //     onChanged: (value) {
+          //       playClick();
+          //       appState?.toggleMonthNames(value);
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
