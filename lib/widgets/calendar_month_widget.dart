@@ -335,7 +335,7 @@ class CalendarMonthWidget extends StatelessWidget {
             top: 1,
             right: 2,
             child: Text(
-              '+',
+              '✦',
               style: TextStyle(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,

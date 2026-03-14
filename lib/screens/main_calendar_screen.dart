@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
+import 'lock_screen.dart';
 
 class MainCalendarScreen extends StatefulWidget {
   const MainCalendarScreen({super.key});
@@ -176,6 +177,20 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
             onPressed: _goToToday,
             tooltip: localizations.today,
           ),
+          IconButton(
+            icon: const Icon(Icons.phone_android),
+            onPressed: () => Navigator.of(context).push(
+              PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (_, __, ___) => LockScreen(
+                  standaloneRoute: true,
+                  child: const SizedBox.shrink(),
+                ),
+                transitionDuration: Duration.zero,
+              ),
+            ),
+            tooltip: localizations.lockScreen,
+          ),
         ],
       ),
       body: _isYearView
@@ -220,7 +235,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                   ).colorScheme.onPrimaryContainer,
                                 ),
                           ),
-                          if (CalendarConverter.isLeapYearNormal(_currentYear))
+                          if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
                             Container(
                               margin: const EdgeInsets.only(top: 3),
                               padding: const EdgeInsets.symmetric(
@@ -378,7 +393,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
             left: 0,
             right: 0,
             child: Text(
-              '★',
+              '✦',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 7,

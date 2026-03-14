@@ -2,7 +2,7 @@
   "@@locale": "ru",
   "appTitle": "Нейтральный Календарь",
   "calendar": "Календарь",
-  "normalCalendar": "Обычный Календарь",
+  "normalCalendar": "Григорианский Календарь",
   "neutralCalendar": "Нейтральный Календарь",
   "comparison": "Сравнение",
   "converter": "Конвертер",
