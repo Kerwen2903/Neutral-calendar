@@ -15,7 +15,22 @@ class ConverterScreen extends StatefulWidget {
 class _ConverterScreenState extends State<ConverterScreen> {
   DateTime _selectedDate = DateTime.now();
   CalendarType _sourceCalendar = CalendarType.normal;
-  CalendarDate? _convertedDate;
+  late CalendarDate _convertedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _convert();
+  }
+
+  void _convert() {
+    final sourceDate = _getDisplayDate();
+    if (_sourceCalendar == CalendarType.normal) {
+      _convertedDate = CalendarConverter.normalToNeutral(sourceDate);
+    } else {
+      _convertedDate = CalendarConverter.neutralToNormal(sourceDate);
+    }
+  }
 
   String _getMonthName(
     AppLocalizations localizations,
@@ -141,19 +156,6 @@ class _ConverterScreenState extends State<ConverterScreen> {
     return '$weekdayName, ${date.day} $monthName ${date.year}';
   }
 
-  void _convertDate() {
-    playClick();
-    final sourceDate = _getDisplayDate();
-
-    setState(() {
-      if (_sourceCalendar == CalendarType.normal) {
-        _convertedDate = CalendarConverter.normalToNeutral(sourceDate);
-      } else {
-        _convertedDate = CalendarConverter.neutralToNormal(sourceDate);
-      }
-    });
-  }
-
   CalendarDate _getDisplayDate() {
     // Convert the selected DateTime to the appropriate calendar format for display
     if (_sourceCalendar == CalendarType.neutral) {
@@ -188,7 +190,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
       if (picked != null && picked != _selectedDate) {
         setState(() {
           _selectedDate = picked;
-          _convertedDate = null;
+          _convert();
         });
       }
     } else {
@@ -207,7 +209,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
             normalDate.month,
             normalDate.day,
           );
-          _convertedDate = null;
+          _convert();
         });
       }
     }
@@ -266,7 +268,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                         playClick();
                         setState(() {
                           _sourceCalendar = newSelection.first;
-                          _convertedDate = null;
+                          _convert();
                         });
                       },
                     ),
@@ -311,49 +313,39 @@ class _ConverterScreenState extends State<ConverterScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Convert Button
-            FilledButton.icon(
-              onPressed: _convertDate,
-              icon: const Icon(Icons.sync_alt),
-              label: Text(localizations.convertDate),
-              style: FilledButton.styleFrom(padding: const EdgeInsets.all(20)),
-            ),
-            const SizedBox(height: 24),
-
-            // Result
-            if (_convertedDate != null)
-              Card(
-                color: Colors.green.shade50,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 48,
-                        color: Colors.green.shade700,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        _sourceCalendar == CalendarType.normal
-                            ? localizations.neutralCalendar
-                            : localizations.normalCalendar,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _formatDate(localizations, _convertedDate!),
-                        style: Theme.of(context).textTheme.titleLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade700,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+            // Result (auto-converted)
+            Card(
+              color: Colors.green.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.sync_alt,
+                      size: 48,
+                      color: Colors.green.shade700,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _sourceCalendar == CalendarType.normal
+                          ? localizations.neutralCalendar
+                          : localizations.normalCalendar,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _formatDate(localizations, _convertedDate),
+                      style: Theme.of(context).textTheme.titleLarge
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green.shade700,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ),
