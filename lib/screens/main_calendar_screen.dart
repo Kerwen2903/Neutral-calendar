@@ -17,7 +17,7 @@ class MainCalendarScreen extends StatefulWidget {
 class _MainCalendarScreenState extends State<MainCalendarScreen> {
   late int _currentYear;
   late int _currentMonth;
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
   bool _isYearView = false;
   bool _slideForward = true; // animation direction
 
@@ -35,6 +35,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
     _currentYear = todayNeutral.year;
     _currentMonth = todayNeutral.month;
+    _selectedDate = DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
   }
 
   void _previousMonth() {
