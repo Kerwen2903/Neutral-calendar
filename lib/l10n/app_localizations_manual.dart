@@ -126,6 +126,9 @@ class AppLocalizations {
       _localizedStrings[locale.languageCode]?['gregorianMonths'] ?? 'Gregorian';
   String get neutralMonths =>
       _localizedStrings[locale.languageCode]?['neutralMonths'] ?? 'Neutral';
+  String get gregorianStyle =>
+      _localizedStrings[locale.languageCode]?['gregorianStyle'] ??
+      'Gregorian Style';
   String get darkMode =>
       _localizedStrings[locale.languageCode]?['darkMode'] ?? 'Dark Mode';
   String get darkModeOn =>
@@ -186,6 +189,7 @@ class AppLocalizations {
       'monthNames': 'Month Names',
       'gregorianMonths': 'Gregorian',
       'neutralMonths': 'Neutral',
+      'gregorianStyle': 'Gregorian Style',
       'darkMode': 'Dark Mode',
       'darkModeOn': 'Dark',
       'lightModeOn': 'Light',
@@ -242,6 +246,7 @@ class AppLocalizations {
       'monthNames': 'Названия месяцев',
       'gregorianMonths': 'Григорианские',
       'neutralMonths': 'Нейтральные',
+      'gregorianStyle': 'Григорианский стиль',
       'darkMode': 'Темная тема',
       'darkModeOn': 'Темная',
       'lightModeOn': 'Светлая',
@@ -298,6 +303,7 @@ class AppLocalizations {
       'monthNames': 'Aý atlary',
       'gregorianMonths': 'Gregorian',
       'neutralMonths': 'Bitarap',
+      'gregorianStyle': 'Grigorian stili',
       'darkMode': 'Garaňky tema',
       'darkModeOn': 'Garaňky',
       'lightModeOn': 'Ýagty',
