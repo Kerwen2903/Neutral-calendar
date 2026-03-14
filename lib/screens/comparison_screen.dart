@@ -195,72 +195,32 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity == null) return;
+          if (details.primaryVelocity! < -200) {
+            _nextMonth();
+          } else if (details.primaryVelocity! > 200) {
+            _previousMonth();
+          }
+        },
+        child: Column(
         children: [
           // Month navigation
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _circleArrow(Icons.chevron_left, _previousMonth),
-                    Expanded(
-                      child: Text(
-                        '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    _circleArrow(Icons.chevron_right, _nextMonth),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  height: 30,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 12,
-                    itemBuilder: (context, index) {
-                      final month = index + 1;
-                      final isActive = month == _normalMonth;
-                      return GestureDetector(
-                        onTap: () {
-                          playClick();
-                          final diff = month - _normalMonth;
-                          setState(() {
-                            _normalMonth = month;
-                            _neutralMonth = ((_neutralMonth + diff - 1) % 12) + 1;
-                            _selectedNormalDate = null;
-                            _selectedNeutralDate = null;
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          margin: const EdgeInsets.symmetric(horizontal: 3),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            _getMonthName(localizations, month, false),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                              color: isActive
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                _circleArrow(Icons.chevron_left, _previousMonth),
+                Expanded(
+                  child: Text(
+                    '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                _circleArrow(Icons.chevron_right, _nextMonth),
               ],
             ),
           ),
@@ -357,6 +317,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
