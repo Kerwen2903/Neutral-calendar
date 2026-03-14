@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../utils/click_sound.dart';
+import '../models/calendar_date.dart';
 import '../models/calendar_type.dart';
 import '../services/calendar_converter.dart';
 
@@ -27,6 +28,22 @@ class CalendarMonthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+
+    // For neutral calendar, convert today's Gregorian date to neutral for "today" highlight
+    final now = DateTime.now();
+    int todayYear, todayMonth, todayDay;
+    if (calendarType == CalendarType.neutral) {
+      final todayNeutral = CalendarConverter.normalToNeutral(
+        CalendarDate(year: now.year, month: now.month, day: now.day, calendarType: CalendarType.normal),
+      );
+      todayYear = todayNeutral.year;
+      todayMonth = todayNeutral.month;
+      todayDay = todayNeutral.day;
+    } else {
+      todayYear = now.year;
+      todayMonth = now.month;
+      todayDay = now.day;
+    }
 
     // Get days in month (calculation value — unchanged by leap years on Neutral)
     final daysInMonth = calendarType == CalendarType.normal
@@ -57,20 +74,14 @@ class CalendarMonthWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildWeekdayHeader(localizations.monday, calendarType,
-                isSunday: false),
-            _buildWeekdayHeader(localizations.tuesday, calendarType,
-                isSunday: false),
-            _buildWeekdayHeader(localizations.wednesday, calendarType,
-                isSunday: false),
-            _buildWeekdayHeader(localizations.thursday, calendarType,
-                isSunday: false),
-            _buildWeekdayHeader(localizations.friday, calendarType,
-                isSunday: false),
-            _buildWeekdayHeader(localizations.saturday, calendarType,
-                isSunday: false, isSaturday: true),
+            _buildWeekdayHeader(localizations.monday, calendarType),
+            _buildWeekdayHeader(localizations.tuesday, calendarType),
+            _buildWeekdayHeader(localizations.wednesday, calendarType),
+            _buildWeekdayHeader(localizations.thursday, calendarType),
+            _buildWeekdayHeader(localizations.friday, calendarType),
+            _buildWeekdayHeader(localizations.saturday, calendarType),
             _buildWeekdayHeader(localizations.sunday, calendarType,
-                isSunday: calendarType == CalendarType.neutral, isSaturday: false),
+                isSunday: true),
           ],
         ),
         const SizedBox(height: 4),
@@ -148,20 +159,15 @@ class CalendarMonthWidget extends StatelessWidget {
 
                       // Current month days (1..daysInMonth)
                       final day = index - firstWeekday + 1;
-                      final isToday = DateTime.now().year == year &&
-                          DateTime.now().month == month &&
-                          DateTime.now().day == day;
+                      final isToday = todayYear == year &&
+                          todayMonth == month &&
+                          todayDay == day;
                       final isSelected = selectedDay != null &&
                           selectedDay! <= daysInMonth &&
                           selectedDay == day;
 
-                      // Sunday column (index % 7 == 6) — dark red on Neutral calendar
-                      final isSundayCell =
-                          calendarType == CalendarType.neutral &&
-                              index % 7 == 6;
-
-                      // Saturday column (index % 7 == 5) — bright red
-                      final isSaturdayCell = index % 7 == 5;
+                      // Sunday column (index % 7 == 6) — bright red
+                      final isSundayCell = index % 7 == 6;
 
                       // Gregorian Feb 29 — actual leap day (amber highlight)
                       final isGregorianLeapDay =
@@ -177,7 +183,6 @@ class CalendarMonthWidget extends StatelessWidget {
                         calendarType,
                         isLeapDay: isGregorianLeapDay,
                         isSundayHighlight: isSundayCell,
-                        isSaturdayHighlight: isSaturdayCell,
                       );
                     },
                   ),
@@ -201,12 +206,10 @@ class CalendarMonthWidget extends StatelessWidget {
   }
 
   Widget _buildWeekdayHeader(String text, CalendarType calendarType,
-      {bool isSunday = false, bool isSaturday = false}) {
+      {bool isSunday = false}) {
     Color color;
-    if (isSaturday) {
-      color = Colors.red; // bright red for Saturday
-    } else if (isSunday) {
-      color = const Color(0xFF8B0000); // dark red for Sunday on Neutral
+    if (isSunday) {
+      color = Colors.red;
     } else {
       switch (calendarType) {
         case CalendarType.normal:
@@ -281,8 +284,7 @@ class CalendarMonthWidget extends StatelessWidget {
     CalendarType calendarType, {
     bool isDisabled = false,
     bool isLeapDay = false,
-    bool isSundayHighlight = false, // dark red for Sunday on Neutral
-    bool isSaturdayHighlight = false, // bright red for Saturday
+    bool isSundayHighlight = false, // bright red for Sunday
     VoidCallback? onTap,
   }) {
     Color? backgroundColor;
@@ -315,15 +317,10 @@ class CalendarMonthWidget extends StatelessWidget {
           : Colors.green.shade300;
     } else {
       backgroundColor = null;
-      // Saturday: bright red, Sunday on Neutral: dark red
-      textColor = isSaturdayHighlight
-          ? Colors.red
-          : (isSundayHighlight ? const Color(0xFF8B0000) : null);
-      borderColor = isSaturdayHighlight
+      textColor = isSundayHighlight ? Colors.red : null;
+      borderColor = isSundayHighlight
           ? Colors.red.withValues(alpha: 0.4)
-          : (isSundayHighlight
-              ? const Color(0xFF8B0000).withValues(alpha: 0.4)
-              : Colors.grey.shade300);
+          : Colors.grey.shade300;
     }
 
     Widget dayText = Center(
