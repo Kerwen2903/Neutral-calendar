@@ -472,8 +472,12 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
       _currentMonth,
     );
 
+    final isLeapFeb =
+        _currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear);
+
     // Get the weekday of the first day of the month
     final firstDayWeekday = _getWeekdayForDay(_currentYear, _currentMonth, 1);
+    final gridRows = ((firstDayWeekday + daysInMonth) / 7).ceil();
 
     return Dialog(
       child: Container(
@@ -537,66 +541,114 @@ class _NeutralDatePickerDialogState extends State<_NeutralDatePickerDialog> {
             const SizedBox(height: 8),
             // Calendar grid
             SizedBox(
-              height: 240,
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: 1,
-                ),
-                itemCount: 42, // 6 weeks
-                itemBuilder: (context, index) {
-                  final dayNumber = index - firstDayWeekday + 1;
-
-                  if (dayNumber < 1 || dayNumber > daysInMonth) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final isSelected =
-                      dayNumber == _selectedDay &&
-                      _currentMonth == widget.initialDate.month &&
-                      _currentYear == widget.initialDate.year;
-
-                  final isSunCol = index % 7 == 0;
-
-                  return InkWell(
-                    onTap: () {
-                      playClick();
-                      setState(() {
-                        _selectedDay = dayNumber;
-                      });
-                      Navigator.of(context).pop(
-                        CalendarDate(
-                          year: _currentYear,
-                          month: _currentMonth,
-                          day: dayNumber,
-                          calendarType: CalendarType.neutral,
+              height: isLeapFeb ? 280 : 240,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final cellSize = constraints.maxWidth / 7;
+                  return Stack(
+                    children: [
+                      GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          childAspectRatio: 1,
                         ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
-                        shape: BoxShape.circle,
+                        itemCount: 42, // 6 weeks
+                        itemBuilder: (context, index) {
+                          final dayNumber = index - firstDayWeekday + 1;
+
+                          if (dayNumber < 1 || dayNumber > daysInMonth) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final isSelected =
+                              dayNumber == _selectedDay &&
+                              _currentMonth == widget.initialDate.month &&
+                              _currentYear == widget.initialDate.year;
+
+                          final isSunCol = index % 7 == 0;
+
+                          return InkWell(
+                            onTap: () {
+                              playClick();
+                              setState(() {
+                                _selectedDay = dayNumber;
+                              });
+                              Navigator.of(context).pop(
+                                CalendarDate(
+                                  year: _currentYear,
+                                  month: _currentMonth,
+                                  day: dayNumber,
+                                  calendarType: CalendarType.neutral,
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '$dayNumber',
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Theme.of(context).colorScheme.onPrimary
+                                        : (isSunCol
+                                            ? Colors.red
+                                            : Theme.of(context).colorScheme.onSurface),
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      child: Center(
-                        child: Text(
-                          '$dayNumber',
-                          style: TextStyle(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : (isSunCol
-                                    ? Colors.red
-                                    : Theme.of(context).colorScheme.onSurface),
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                      // Leap day 31 for Neutral Feb in leap years
+                      if (isLeapFeb)
+                        Positioned(
+                          top: gridRows * cellSize,
+                          left: 3 * cellSize,
+                          width: cellSize,
+                          height: cellSize,
+                          child: InkWell(
+                            onTap: () {
+                              playClick();
+                              Navigator.of(context).pop(
+                                CalendarDate(
+                                  year: _currentYear,
+                                  month: _currentMonth,
+                                  day: 31,
+                                  calendarType: CalendarType.neutral,
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade100,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.amber.shade600, width: 1.5),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '31',
+                                  style: TextStyle(
+                                    color: Colors.orange.shade900,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                    ],
                   );
                 },
               ),
