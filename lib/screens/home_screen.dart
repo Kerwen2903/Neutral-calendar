@@ -4,7 +4,6 @@ import 'main_calendar_screen.dart';
 import 'comparison_screen.dart';
 import 'converter_screen.dart';
 import 'settings_screen.dart';
-import 'lock_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _NavItem(Icons.compare_arrows, localizations.comparison),
       _NavItem(Icons.sync_alt, localizations.converter),
       _NavItem(Icons.settings, localizations.settings),
-      _NavItem(Icons.phone_android, localizations.lockScreen),
     ];
 
     return Scaffold(
@@ -56,26 +54,13 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 64,
             child: Row(
               children: List.generate(navItems.length, (i) {
-                // last item (lock screen) is a special action, not a tab
-                final isLockBtn = i == navItems.length - 1;
-                final selected = !isLockBtn && _selectedIndex == i;
+                final selected = _selectedIndex == i;
                 final color = selected
                     ? colorScheme.primary
                     : colorScheme.onSurface.withValues(alpha: 0.55);
                 return Expanded(
                   child: InkWell(
-                    onTap: isLockBtn
-                        ? () => Navigator.of(context).push(
-                              PageRouteBuilder(
-                                opaque: false,
-                                pageBuilder: (_, __, ___) => LockScreen(
-                                  standaloneRoute: true,
-                                  child: const SizedBox.shrink(),
-                                ),
-                                transitionDuration: Duration.zero,
-                              ),
-                            )
-                        : () => setState(() => _selectedIndex = i),
+                    onTap: () => setState(() => _selectedIndex = i),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

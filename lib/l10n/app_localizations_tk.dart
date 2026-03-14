@@ -15,7 +15,7 @@ class AppLocalizationsTk extends AppLocalizations {
   String get calendar => 'Senenama';
 
   @override
-  String get normalCalendar => 'Adaty Senenama';
+  String get normalCalendar => 'Grigorian Senenama';
 
   @override
   String get neutralCalendar => 'Bitarap Senenama';

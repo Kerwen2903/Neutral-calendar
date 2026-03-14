@@ -25,7 +25,7 @@ class AppLocalizations {
       _localizedStrings[locale.languageCode]?['calendar'] ?? 'Calendar';
   String get normalCalendar =>
       _localizedStrings[locale.languageCode]?['normalCalendar'] ??
-      'Normal Calendar';
+      'Gregorian Calendar';
   String get neutralCalendar =>
       _localizedStrings[locale.languageCode]?['neutralCalendar'] ??
       'Neutral Calendar';
@@ -137,7 +137,7 @@ class AppLocalizations {
     'en': {
       'appTitle': 'Neutral Calendar',
       'calendar': 'Neutral Style',
-      'normalCalendar': 'Normal Calendar',
+      'normalCalendar': 'Gregorian Calendar',
       'neutralCalendar': 'Neutral Calendar',
       'comparison': 'Combo Style',
       'converter': 'Converter',
@@ -193,7 +193,7 @@ class AppLocalizations {
     'ru': {
       'appTitle': 'Нейтральный Календарь',
       'calendar': 'Нейтральный стиль',
-      'normalCalendar': 'Обычный Календарь',
+      'normalCalendar': 'Григорианский Календарь',
       'neutralCalendar': 'Нейтральный Календарь',
       'comparison': 'Комбинация стилей',
       'converter': 'Конвертер',
@@ -249,7 +249,7 @@ class AppLocalizations {
     'tk': {
       'appTitle': 'Bitarap Senenama',
       'calendar': 'Bitarap stil',
-      'normalCalendar': 'Adaty Senenama',
+      'normalCalendar': 'Grigorian Senenama',
       'neutralCalendar': 'Bitarap Senenama',
       'comparison': 'Stil utgaşmasy',
       'converter': 'Öwürmek',
