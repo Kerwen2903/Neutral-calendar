@@ -3,6 +3,7 @@ import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
 import '../utils/click_sound.dart';
+import 'comparison_screen.dart';
 import 'lock_screen.dart';
 
 class MainCalendarScreen extends StatefulWidget {
@@ -186,6 +187,18 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
             icon: const Icon(Icons.today),
             onPressed: _goToToday,
             tooltip: localizations.today,
+          ),
+          IconButton(
+            icon: const Icon(Icons.compare_arrows),
+            onPressed: () {
+              playClick();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ComparisonScreen(),
+                ),
+              );
+            },
+            tooltip: localizations.comparison,
           ),
           IconButton(
             icon: const Icon(Icons.phone_android),
