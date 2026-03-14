@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../utils/click_sound.dart';
 import 'main_calendar_screen.dart';
-import 'comparison_screen.dart';
+import 'gregorian_calendar_screen.dart';
 import 'converter_screen.dart';
 import 'settings_screen.dart';
 
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _screens = [
     MainCalendarScreen(),
-    ComparisonScreen(),
+    GregorianCalendarScreen(),
     ConverterScreen(),
     SettingsScreen(),
   ];
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final List<_NavItem> navItems = [
       _NavItem(Icons.calendar_month, localizations.calendar),
-      _NavItem(Icons.compare_arrows, localizations.comparison),
+      _NavItem(Icons.calendar_today, localizations.normalCalendar),
       _NavItem(Icons.sync_alt, localizations.converter),
       _NavItem(Icons.settings, localizations.settings),
     ];
