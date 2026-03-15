@@ -36,7 +36,17 @@ class AppLocalizations {
   String get settings =>
       _localizedStrings[locale.languageCode]?['settings'] ?? 'Settings';
   String get lockScreen =>
-      _localizedStrings[locale.languageCode]?['lockScreen'] ?? 'Lock';
+      _localizedStrings[locale.languageCode]?['lockScreen'] ?? 'Lock Styles';
+  String get lockTextVariant =>
+      _localizedStrings[locale.languageCode]?['lockTextVariant'] ?? 'Text';
+  String get lockTextBoth =>
+      _localizedStrings[locale.languageCode]?['lockTextBoth'] ?? 'Both';
+  String get lockTextNeutralOnly =>
+      _localizedStrings[locale.languageCode]?['lockTextNeutralOnly'] ?? 'Neutral';
+  String get lockTextGregorianOnly =>
+      _localizedStrings[locale.languageCode]?['lockTextGregorianOnly'] ?? 'Gregorian';
+  String get lockTextTimeOnly =>
+      _localizedStrings[locale.languageCode]?['lockTextTimeOnly'] ?? 'Time only';
   String get language =>
       _localizedStrings[locale.languageCode]?['language'] ?? 'Language';
   String get turkmen => 'Türkmen';
@@ -145,7 +155,12 @@ class AppLocalizations {
       'comparison': 'Combo Style',
       'converter': 'Converter',
       'settings': 'Settings',
-      'lockScreen': 'Lock',
+      'lockScreen': 'Lock Styles',
+      'lockTextVariant': 'Text',
+      'lockTextBoth': 'Both',
+      'lockTextNeutralOnly': 'Neutral',
+      'lockTextGregorianOnly': 'Gregorian',
+      'lockTextTimeOnly': 'Time only',
       'language': 'Language',
       'january': 'January',
       'february': 'February',
@@ -202,7 +217,12 @@ class AppLocalizations {
       'comparison': 'Комбинация стилей',
       'converter': 'Конвертер',
       'settings': 'Настройки',
-      'lockScreen': 'Заставка',
+      'lockScreen': 'Стили заставки',
+      'lockTextVariant': 'Текст',
+      'lockTextBoth': 'Оба',
+      'lockTextNeutralOnly': 'Нейтральный',
+      'lockTextGregorianOnly': 'Григорианский',
+      'lockTextTimeOnly': 'Только время',
       'language': 'Язык',
       'january': 'Январь',
       'february': 'Февраль',
@@ -259,7 +279,12 @@ class AppLocalizations {
       'comparison': 'Stil utgaşmasy',
       'converter': 'Öwürmek',
       'settings': 'Sazlamalar',
-      'lockScreen': 'Zasawka',
+      'lockScreen': 'Zasawka stilleri',
+      'lockTextVariant': 'Ýazgy',
+      'lockTextBoth': 'Ikisi',
+      'lockTextNeutralOnly': 'Bitarap',
+      'lockTextGregorianOnly': 'Grigorian',
+      'lockTextTimeOnly': 'Diňe wagt',
       'language': 'Dil',
       'january': 'Ýanwar',
       'february': 'Fewral',
