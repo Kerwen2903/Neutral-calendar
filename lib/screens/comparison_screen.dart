@@ -267,78 +267,72 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   horizontal: 12.0,
                   vertical: 4.0,
                 ),
-                child: Column(
-                  children: [
-                    // Normal Calendar
-                    Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: CalendarMonthWidget(
-                                  year: _normalYear,
-                                  month: _normalMonth,
-                                  calendarType: CalendarType.normal,
-                                  selectedDay:
-                                      _selectedNormalDate?.year == _normalYear &&
-                                          _selectedNormalDate?.month ==
-                                              _normalMonth
-                                      ? _selectedNormalDate?.day
-                                      : null,
-                                  onDaySelected: _onNormalDaySelected,
-                                  onPreviousMonthDaySelected:
-                                      _onNormalPreviousMonthDaySelected,
-                                  onNextMonthDaySelected:
-                                      _onNormalNextMonthDaySelected,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    // Neutral Calendar
-                    Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: CalendarMonthWidget(
-                                  year: _neutralYear,
-                                  month: _neutralMonth,
-                                  calendarType: CalendarType.neutral,
-                                  selectedDay:
-                                      _selectedNeutralDate?.year ==
-                                              _neutralYear &&
-                                          _selectedNeutralDate?.month ==
-                                              _neutralMonth
-                                      ? _selectedNeutralDate?.day
-                                      : null,
-                                  onDaySelected: _onNeutralDaySelected,
-                                  onPreviousMonthDaySelected:
-                                      _onNeutralPreviousMonthDaySelected,
-                                  onNextMonthDaySelected:
-                                      _onNeutralNextMonthDaySelected,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: _buildCalendarPair(localizations, useNeutral),
               ),
             ),
           ),
         ],
       ),
       ),
+    );
+  }
+
+  Widget _buildCalendarPair(AppLocalizations localizations, bool useNeutral) {
+    final isNeutralLeapFeb = _neutralMonth == 2 &&
+        CalendarConverter.isLeapYearNormal(_neutralYear);
+
+    return Column(
+      children: [
+        // Normal Calendar
+        Expanded(
+          flex: isNeutralLeapFeb ? 5 : 1,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CalendarMonthWidget(
+                year: _normalYear,
+                month: _normalMonth,
+                calendarType: CalendarType.normal,
+                selectedDay:
+                    _selectedNormalDate?.year == _normalYear &&
+                        _selectedNormalDate?.month == _normalMonth
+                    ? _selectedNormalDate?.day
+                    : null,
+                onDaySelected: _onNormalDaySelected,
+                onPreviousMonthDaySelected:
+                    _onNormalPreviousMonthDaySelected,
+                onNextMonthDaySelected:
+                    _onNormalNextMonthDaySelected,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Neutral Calendar
+        Expanded(
+          flex: isNeutralLeapFeb ? 6 : 1,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CalendarMonthWidget(
+                year: _neutralYear,
+                month: _neutralMonth,
+                calendarType: CalendarType.neutral,
+                selectedDay:
+                    _selectedNeutralDate?.year == _neutralYear &&
+                        _selectedNeutralDate?.month == _neutralMonth
+                    ? _selectedNeutralDate?.day
+                    : null,
+                onDaySelected: _onNeutralDaySelected,
+                onPreviousMonthDaySelected:
+                    _onNeutralPreviousMonthDaySelected,
+                onNextMonthDaySelected:
+                    _onNeutralNextMonthDaySelected,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
