@@ -95,108 +95,112 @@ class CalendarMonthWidget extends StatelessWidget {
 
               // Cell size — account for 2px mainAxisSpacing between rows
               final cellW = (constraints.maxWidth - 2 * 6) / 7;
-              final leapExtra = isNeutralLeapFeb ? 1 : 0;
-              final totalRows = weeksNeeded + leapExtra;
+              final totalRows = weeksNeeded + (isNeutralLeapFeb ? 1 : 0);
               final totalSpacing = (totalRows - 1) * 2.0;
-              final cellH = (constraints.maxHeight - totalSpacing) / (weeksNeeded + (isNeutralLeapFeb ? 0.55 : 0));
+              final cellH = (constraints.maxHeight - totalSpacing) / totalRows;
 
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                      childAspectRatio: cellW / cellH,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 2,
-                    ),
-                    itemCount: weeksNeeded * 7,
-                    itemBuilder: (context, index) {
-                      // Previous month days
-                      if (index < firstWeekday) {
-                        final prevMonth = month == 1 ? 12 : month - 1;
-                        final prevYear = month == 1 ? year - 1 : year;
-                        final daysInPrevMonth =
-                            calendarType == CalendarType.normal
-                                ? CalendarConverter.getDaysInMonthNormal(
-                                    prevYear, prevMonth)
-                                : CalendarConverter.getDaysInMonthNeutral(
-                                    prevYear, prevMonth);
-                        final day =
-                            daysInPrevMonth - (firstWeekday - index - 1);
-                        return _buildDayCell(
-                          day,
-                          false,
-                          false,
-                          calendarType,
-                          isDisabled: true,
-                          onTap: onPreviousMonthDaySelected != null
-                              ? () => onPreviousMonthDaySelected!(
-                                  prevYear, prevMonth, day)
-                              : null,
-                        );
-                      }
+              final gridItemCount = isNeutralLeapFeb
+                  ? (weeksNeeded + 1) * 7
+                  : weeksNeeded * 7;
+              // Leap day 31 goes in the center column (col 3) of the extra row
+              final leapDayIndex = weeksNeeded * 7 + 3;
 
-                      // Next month days
-                      if (index >= firstWeekday + daysInMonth) {
-                        final nextMonth = month == 12 ? 1 : month + 1;
-                        final nextYear = month == 12 ? year + 1 : year;
-                        final day = index - firstWeekday - daysInMonth + 1;
-                        return _buildDayCell(
-                          day,
-                          false,
-                          false,
-                          calendarType,
-                          isDisabled: true,
-                          onTap: onNextMonthDaySelected != null
-                              ? () => onNextMonthDaySelected!(
-                                  nextYear, nextMonth, day)
-                              : null,
-                        );
-                      }
-
-                      // Current month days (1..daysInMonth)
-                      final day = index - firstWeekday + 1;
-                      final isToday = todayYear == year &&
-                          todayMonth == month &&
-                          todayDay == day;
-                      final isSelected = selectedDay != null &&
-                          selectedDay! <= daysInMonth &&
-                          selectedDay == day;
-
-                      // Sunday column (index % 7 == 6) — bright red
-                      final isSundayCell = index % 7 == 6;
-
-                      // Gregorian Feb 29 — actual leap day (amber highlight)
-                      final isGregorianLeapDay =
-                          calendarType == CalendarType.normal &&
-                              month == 2 &&
-                              day == 29 &&
-                              CalendarConverter.isLeapYearNormal(year);
-
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  childAspectRatio: cellW / cellH,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 2,
+                ),
+                itemCount: gridItemCount,
+                itemBuilder: (context, index) {
+                  // Extra row for neutral leap day
+                  if (isNeutralLeapFeb && index >= weeksNeeded * 7) {
+                    if (index == leapDayIndex) {
                       return _buildDayCell(
-                        day,
-                        isToday,
-                        isSelected,
+                        31,
+                        false,
+                        selectedDay == 31,
                         calendarType,
-                        isLeapDay: isGregorianLeapDay,
-                        isSundayHighlight: isSundayCell,
+                        isLeapDay: true,
                       );
-                    },
-                  ),
-                  // Neutral Feb 31 — visual-only leap day, placed between Thu (col 3) and Fri (col 4)
-                  if (isNeutralLeapFeb)
-                    Positioned(
-                      // sits below the last real row, shifted to around col 3.4 (between Thu & Fri)
-                      top: weeksNeeded * (cellH + 2),
-                      left: 3.4 * (cellW + 2),
-                      width: cellW,
-                      height: cellH * 0.5,
-                      child: _buildNeutralLeapDay31Cell(context, calendarType),
-                    ),
-                ],
+                    }
+                    return const SizedBox.shrink();
+                  }
+
+                  // Previous month days
+                  if (index < firstWeekday) {
+                    final prevMonth = month == 1 ? 12 : month - 1;
+                    final prevYear = month == 1 ? year - 1 : year;
+                    final daysInPrevMonth =
+                        calendarType == CalendarType.normal
+                            ? CalendarConverter.getDaysInMonthNormal(
+                                prevYear, prevMonth)
+                            : CalendarConverter.getDaysInMonthNeutral(
+                                prevYear, prevMonth);
+                    final day =
+                        daysInPrevMonth - (firstWeekday - index - 1);
+                    return _buildDayCell(
+                      day,
+                      false,
+                      false,
+                      calendarType,
+                      isDisabled: true,
+                      onTap: onPreviousMonthDaySelected != null
+                          ? () => onPreviousMonthDaySelected!(
+                              prevYear, prevMonth, day)
+                          : null,
+                    );
+                  }
+
+                  // Next month days
+                  if (index >= firstWeekday + daysInMonth) {
+                    final nextMonth = month == 12 ? 1 : month + 1;
+                    final nextYear = month == 12 ? year + 1 : year;
+                    final day = index - firstWeekday - daysInMonth + 1;
+                    return _buildDayCell(
+                      day,
+                      false,
+                      false,
+                      calendarType,
+                      isDisabled: true,
+                      onTap: onNextMonthDaySelected != null
+                          ? () => onNextMonthDaySelected!(
+                              nextYear, nextMonth, day)
+                          : null,
+                    );
+                  }
+
+                  // Current month days (1..daysInMonth)
+                  final day = index - firstWeekday + 1;
+                  final isToday = todayYear == year &&
+                      todayMonth == month &&
+                      todayDay == day;
+                  final isSelected = selectedDay != null &&
+                      selectedDay! <= daysInMonth &&
+                      selectedDay == day;
+
+                  // Sunday column (index % 7 == 6) — bright red
+                  final isSundayCell = index % 7 == 6;
+
+                  // Gregorian Feb 29 — actual leap day (amber highlight)
+                  final isGregorianLeapDay =
+                      calendarType == CalendarType.normal &&
+                          month == 2 &&
+                          day == 29 &&
+                          CalendarConverter.isLeapYearNormal(year);
+
+                  return _buildDayCell(
+                    day,
+                    isToday,
+                    isSelected,
+                    calendarType,
+                    isLeapDay: isGregorianLeapDay,
+                    isSundayHighlight: isSundayCell,
+                  );
+                },
               );
             },
           ),
@@ -233,46 +237,6 @@ class CalendarMonthWidget extends StatelessWidget {
             fontSize: 11,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildNeutralLeapDay31Cell(
-    BuildContext context,
-    CalendarType calendarType,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.amber.shade100,
-        border: Border.all(color: Colors.amber.shade600, width: 1.5),
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: Stack(
-        children: [
-          Center(
-            child: Text(
-              '31',
-              style: TextStyle(
-                color: Colors.orange.shade900,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 1,
-            left: 0,
-            right: 0,
-            child: Text(
-              '✦',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 7,
-                color: Colors.amber.shade700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
