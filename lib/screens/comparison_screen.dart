@@ -249,7 +249,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 key: ValueKey('comp-$_normalYear-$_normalMonth-$_neutralYear-$_neutralMonth'),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12.0,
-                  vertical: 4.0,
+                  vertical: 2.0,
                 ),
                 child: _buildCalendarPair(localizations, useNeutral),
               ),
@@ -266,6 +266,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     final isNeutralLeapFeb = _neutralMonth == 2 &&
         CalendarConverter.isLeapYearNormal(_neutralYear);
 
+    final cardPadding = isNeutralLeapFeb ? 4.0 : 8.0;
+
     return Column(
       children: [
         // Normal Calendar
@@ -273,7 +275,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           flex: isNeutralLeapFeb ? 5 : 1,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(cardPadding),
               child: CalendarMonthWidget(
                 year: _normalYear,
                 month: _normalMonth,
@@ -292,13 +294,13 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: isNeutralLeapFeb ? 2 : 4),
         // Neutral Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 6 : 1,
+          flex: isNeutralLeapFeb ? 7 : 1,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(cardPadding),
               child: CalendarMonthWidget(
                 year: _neutralYear,
                 month: _neutralMonth,
