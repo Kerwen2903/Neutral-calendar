@@ -101,8 +101,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     BuildContext context,
     int index,
     String label,
-    _NeutralCalendarAppState? appState,
   ) {
+    final appState = NeutralCalendarApp.of(context);
     final selected = (appState?.lockScreenTextVariant ?? 0) == index;
     return ChoiceChip(
       label: Text(label),
@@ -252,10 +252,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _buildTextVariantChip(context, 0, localizations.lockTextBoth, appState),
-                    _buildTextVariantChip(context, 1, localizations.lockTextNeutralOnly, appState),
-                    _buildTextVariantChip(context, 2, localizations.lockTextGregorianOnly, appState),
-                    _buildTextVariantChip(context, 3, localizations.lockTextTimeOnly, appState),
+                    _buildTextVariantChip(context, 0, localizations.lockTextBoth),
+                    _buildTextVariantChip(context, 1, localizations.lockTextNeutralOnly),
+                    _buildTextVariantChip(context, 2, localizations.lockTextGregorianOnly),
+                    _buildTextVariantChip(context, 3, localizations.lockTextTimeOnly),
                   ],
                 ),
               ],
