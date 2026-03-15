@@ -141,7 +141,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get today => 'Today';
 
   @override
-  String get leapYear => 'Leap Year';
+  String get leapYear => 'Leap month';
 
   @override
   String get specialDay => 'Special Day';

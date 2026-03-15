@@ -141,7 +141,7 @@ class AppLocalizationsTk extends AppLocalizations {
   String get today => 'Şu gün';
 
   @override
-  String get leapYear => 'Artykmaç ýyl';
+  String get leapYear => 'Artykmaç aý';
 
   @override
   String get specialDay => 'Aýratyn gün';

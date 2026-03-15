@@ -35,7 +35,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
     _currentYear = todayNeutral.year;
     _currentMonth = todayNeutral.month;
-    _selectedDate = DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
+    _selectedDate =
+        DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
   }
 
   void _previousMonth() {
@@ -78,7 +79,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     setState(() {
       _currentYear = todayNeutral.year;
       _currentMonth = todayNeutral.month;
-      _selectedDate = DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
+      _selectedDate =
+          DateTime(todayNeutral.year, todayNeutral.month, todayNeutral.day);
     });
   }
 
@@ -221,16 +223,19 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.phone_android),
-            onPressed: () { playClick(); Navigator.of(context).push(
-              PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (_, __, ___) => LockScreen(
-                  standaloneRoute: true,
-                  child: const SizedBox.shrink(),
+            onPressed: () {
+              playClick();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  opaque: false,
+                  pageBuilder: (_, __, ___) => LockScreen(
+                    standaloneRoute: true,
+                    child: const SizedBox.shrink(),
+                  ),
+                  transitionDuration: Duration.zero,
                 ),
-                transitionDuration: Duration.zero,
-              ),
-            ); },
+              );
+            },
             tooltip: localizations.lockScreen,
           ),
         ],
@@ -247,209 +252,224 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 }
               },
               child: Column(
-              children: [
-                // Month navigation header
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _circleArrow(Icons.chevron_left, _previousMonth),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            switchInCurve: Curves.easeOut,
-                            switchOutCurve: Curves.easeIn,
-                            layoutBuilder: (currentChild, previousChildren) {
-                              return Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  ...previousChildren,
-                                  if (currentChild != null) currentChild,
-                                ],
-                              );
-                            },
-                            transitionBuilder: (child, animation) {
-                              final isIncoming = animation.status == AnimationStatus.forward ||
-                                  animation.status == AnimationStatus.completed;
-                              final offsetTween = Tween<Offset>(
-                                begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
-                                end: Offset.zero,
-                              );
-                              return SlideTransition(
-                                position: offsetTween.animate(animation),
-                                child: FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: Text(
-                              '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                              key: ValueKey('$_currentYear-$_currentMonth'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onPrimaryContainer,
-                                  ),
-                            ),
-                          ),
-                          if (_currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear))
-                            Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.shade400,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                '✦ Leap Year',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange.shade900,
-                                ),
-                              ),
-                                ),
-                            ],
-                          ),
-                          _circleArrow(Icons.chevron_right, _nextMonth),
-                    ],
-                  ),
-                ),
-
-                // Weekday headers
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    children: [
-                      _buildWeekdayHeader(localizations.monday),
-                      _buildWeekdayHeader(localizations.tuesday),
-                      _buildWeekdayHeader(localizations.wednesday),
-                      _buildWeekdayHeader(localizations.thursday),
-                      _buildWeekdayHeader(localizations.friday),
-                      _buildWeekdayHeader(localizations.saturday),
-                      _buildWeekdayHeader(localizations.sunday, isSunday: true),
-                    ],
-                  ),
-                ),
-
-                // Calendar grid with animation
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    layoutBuilder: (currentChild, previousChildren) {
-                      return Stack(
-                        children: [
-                          ...previousChildren,
-                          if (currentChild != null) currentChild,
-                        ],
-                      );
-                    },
-                    transitionBuilder: (child, animation) {
-                      final isIncoming = animation.status == AnimationStatus.forward ||
-                          animation.status == AnimationStatus.completed;
-                      final offsetTween = Tween<Offset>(
-                        begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
-                        end: Offset.zero,
-                      );
-                      return SlideTransition(
-                        position: offsetTween.animate(animation),
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
+                children: [
+                  // Month navigation header
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
-                      );
-                    },
-                    child: LayoutBuilder(
-                      key: ValueKey('grid-$_currentYear-$_currentMonth'),
-                      builder: (context, constraints) {
-                        final cellSize = (constraints.maxWidth - 16 - 4 * 6) / 7;
-                        final gridRows =
-                            ((firstWeekday + daysInMonth) / 7).ceil();
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Stack(
-                            children: [
-                              GridView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 7,
-                                  childAspectRatio: 1,
-                                  crossAxisSpacing: 4,
-                                  mainAxisSpacing: 4,
-                                ),
-                                itemCount: firstWeekday + daysInMonth,
-                                itemBuilder: (context, index) {
-                                  if (index < firstWeekday) {
-                                    return const SizedBox();
-                                  }
-
-                                  final day = index - firstWeekday + 1;
-                                  final isToday =
-                                      todayNeutral.year == _currentYear &&
-                                          todayNeutral.month == _currentMonth &&
-                                          todayNeutral.day == day;
-
-                                  final isSelected =
-                                      _selectedDate.year == _currentYear &&
-                                          _selectedDate.month == _currentMonth &&
-                                          _selectedDate.day == day;
-
-                                  final isSundayCell = index % 7 == 6;
-
-                                  return _buildDayCell(
-                                    day,
-                                    isToday,
-                                    isSelected,
-                                    isSundayCell: isSundayCell,
-                                  );
-                                },
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _circleArrow(Icons.chevron_left, _previousMonth),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeIn,
+                              layoutBuilder: (currentChild, previousChildren) {
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    ...previousChildren,
+                                    if (currentChild != null) currentChild,
+                                  ],
+                                );
+                              },
+                              transitionBuilder: (child, animation) {
+                                final isIncoming = animation.status ==
+                                        AnimationStatus.forward ||
+                                    animation.status ==
+                                        AnimationStatus.completed;
+                                final offsetTween = Tween<Offset>(
+                                  begin: Offset(
+                                      isIncoming
+                                          ? (_slideForward ? 1.0 : -1.0)
+                                          : (_slideForward ? -1.0 : 1.0),
+                                      0),
+                                  end: Offset.zero,
+                                );
+                                return SlideTransition(
+                                  position: offsetTween.animate(animation),
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
+                                key: ValueKey('$_currentYear-$_currentMonth'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
+                                    ),
                               ),
-                              // Neutral Feb 31 — visual-only, placed between Thu & Fri below last row
-                              if (isNeutralLeapFeb)
-                                Positioned(
-                                  top: gridRows * (cellSize + 4),
-                                  left: 3.4 * (cellSize + 4),
-                                  width: cellSize,
-                                  height: cellSize * 0.9,
-                                  child: _buildLeapDay31Cell(),
+                            ),
+                            if (_currentMonth == 2 &&
+                                CalendarConverter.isLeapYearNormal(
+                                    _currentYear))
+                              Container(
+                                margin: const EdgeInsets.only(top: 3),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
                                 ),
-                            ],
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.shade400,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  'Leap Year ✦',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange.shade900,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        _circleArrow(Icons.chevron_right, _nextMonth),
+                      ],
+                    ),
+                  ),
+
+                  // Weekday headers
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        _buildWeekdayHeader(localizations.monday),
+                        _buildWeekdayHeader(localizations.tuesday),
+                        _buildWeekdayHeader(localizations.wednesday),
+                        _buildWeekdayHeader(localizations.thursday),
+                        _buildWeekdayHeader(localizations.friday),
+                        _buildWeekdayHeader(localizations.saturday),
+                        _buildWeekdayHeader(localizations.sunday,
+                            isSunday: true),
+                      ],
+                    ),
+                  ),
+
+                  // Calendar grid with animation
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          children: [
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
+                      transitionBuilder: (child, animation) {
+                        final isIncoming =
+                            animation.status == AnimationStatus.forward ||
+                                animation.status == AnimationStatus.completed;
+                        final offsetTween = Tween<Offset>(
+                          begin: Offset(
+                              isIncoming
+                                  ? (_slideForward ? 1.0 : -1.0)
+                                  : (_slideForward ? -1.0 : 1.0),
+                              0),
+                          end: Offset.zero,
+                        );
+                        return SlideTransition(
+                          position: offsetTween.animate(animation),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
                           ),
                         );
                       },
+                      child: LayoutBuilder(
+                        key: ValueKey('grid-$_currentYear-$_currentMonth'),
+                        builder: (context, constraints) {
+                          final cellSize =
+                              (constraints.maxWidth - 16 - 4 * 6) / 7;
+                          final gridRows =
+                              ((firstWeekday + daysInMonth) / 7).ceil();
+
+                          return Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Stack(
+                              children: [
+                                GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 7,
+                                    childAspectRatio: 1,
+                                    crossAxisSpacing: 4,
+                                    mainAxisSpacing: 4,
+                                  ),
+                                  itemCount: firstWeekday + daysInMonth,
+                                  itemBuilder: (context, index) {
+                                    if (index < firstWeekday) {
+                                      return const SizedBox();
+                                    }
+
+                                    final day = index - firstWeekday + 1;
+                                    final isToday = todayNeutral.year ==
+                                            _currentYear &&
+                                        todayNeutral.month == _currentMonth &&
+                                        todayNeutral.day == day;
+
+                                    final isSelected = _selectedDate.year ==
+                                            _currentYear &&
+                                        _selectedDate.month == _currentMonth &&
+                                        _selectedDate.day == day;
+
+                                    final isSundayCell = index % 7 == 6;
+
+                                    return _buildDayCell(
+                                      day,
+                                      isToday,
+                                      isSelected,
+                                      isSundayCell: isSundayCell,
+                                    );
+                                  },
+                                ),
+                                // Neutral Feb 31 — visual-only, placed between Thu & Fri below last row
+                                if (isNeutralLeapFeb)
+                                  Positioned(
+                                    top: gridRows * (cellSize + 4),
+                                    left: 3.4 * (cellSize + 4),
+                                    width: cellSize,
+                                    height: cellSize * 0.9,
+                                    child: _buildLeapDay31Cell(),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
     );
   }
@@ -478,9 +498,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSunday
-                ? Colors.red
-                : Theme.of(context).colorScheme.primary,
+            color:
+                isSunday ? Colors.red : Theme.of(context).colorScheme.primary,
             fontSize: 14,
           ),
         ),
@@ -552,9 +571,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = isSundayCell
-          ? Colors.red
-          : Theme.of(context).colorScheme.onSurface;
+      textColor =
+          isSundayCell ? Colors.red : Theme.of(context).colorScheme.onSurface;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -586,7 +604,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     );
   }
 
-  Widget _buildYearView(AppLocalizations localizations, bool useNeutral, CalendarDate todayNeutral) {
+  Widget _buildYearView(AppLocalizations localizations, bool useNeutral,
+      CalendarDate todayNeutral) {
     return Column(
       children: [
         // Year navigation header
@@ -629,7 +648,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '✦ Leap',
+                        'Leap ✦',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -658,7 +677,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
               itemCount: 12,
               itemBuilder: (context, index) {
                 final month = index + 1;
-                return _buildMonthCard(month, localizations, useNeutral, todayNeutral);
+                return _buildMonthCard(
+                    month, localizations, useNeutral, todayNeutral);
               },
             ),
           ),
@@ -743,7 +763,10 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                           fontWeight: FontWeight.bold,
                           color: entry.$2
                               ? Colors.red
-                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
                         ),
                       ),
                     ),

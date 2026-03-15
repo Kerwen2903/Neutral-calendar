@@ -83,19 +83,32 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
 
   String _getMonthName(AppLocalizations localizations, int month) {
     switch (month) {
-      case 1: return localizations.january;
-      case 2: return localizations.february;
-      case 3: return localizations.march;
-      case 4: return localizations.april;
-      case 5: return localizations.may;
-      case 6: return localizations.june;
-      case 7: return localizations.july;
-      case 8: return localizations.august;
-      case 9: return localizations.september;
-      case 10: return localizations.october;
-      case 11: return localizations.november;
-      case 12: return localizations.december;
-      default: return '';
+      case 1:
+        return localizations.january;
+      case 2:
+        return localizations.february;
+      case 3:
+        return localizations.march;
+      case 4:
+        return localizations.april;
+      case 5:
+        return localizations.may;
+      case 6:
+        return localizations.june;
+      case 7:
+        return localizations.july;
+      case 8:
+        return localizations.august;
+      case 9:
+        return localizations.september;
+      case 10:
+        return localizations.october;
+      case 11:
+        return localizations.november;
+      case 12:
+        return localizations.december;
+      default:
+        return '';
     }
   }
 
@@ -120,9 +133,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              _isYearView
-                  ? Icons.calendar_view_month
-                  : Icons.calendar_view_day,
+              _isYearView ? Icons.calendar_view_month : Icons.calendar_view_day,
             ),
             onPressed: _toggleView,
             tooltip: _isYearView ? 'Month View' : 'Year View',
@@ -184,10 +195,16 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                                 );
                               },
                               transitionBuilder: (child, animation) {
-                                final isIncoming = animation.status == AnimationStatus.forward ||
-                                    animation.status == AnimationStatus.completed;
+                                final isIncoming = animation.status ==
+                                        AnimationStatus.forward ||
+                                    animation.status ==
+                                        AnimationStatus.completed;
                                 final offsetTween = Tween<Offset>(
-                                  begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
+                                  begin: Offset(
+                                      isIncoming
+                                          ? (_slideForward ? 1.0 : -1.0)
+                                          : (_slideForward ? -1.0 : 1.0),
+                                      0),
                                   end: Offset.zero,
                                 );
                                 return SlideTransition(
@@ -226,7 +243,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  '✦ Leap Year',
+                                  'Leap Year ✦',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -273,10 +290,15 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                         );
                       },
                       transitionBuilder: (child, animation) {
-                        final isIncoming = animation.status == AnimationStatus.forward ||
-                            animation.status == AnimationStatus.completed;
+                        final isIncoming =
+                            animation.status == AnimationStatus.forward ||
+                                animation.status == AnimationStatus.completed;
                         final offsetTween = Tween<Offset>(
-                          begin: Offset(isIncoming ? (_slideForward ? 1.0 : -1.0) : (_slideForward ? -1.0 : 1.0), 0),
+                          begin: Offset(
+                              isIncoming
+                                  ? (_slideForward ? 1.0 : -1.0)
+                                  : (_slideForward ? -1.0 : 1.0),
+                              0),
                           end: Offset.zero,
                         );
                         return SlideTransition(
@@ -288,8 +310,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                         );
                       },
                       child: Padding(
-                        key: ValueKey(
-                            'greg-$_currentYear-$_currentMonth'),
+                        key: ValueKey('greg-$_currentYear-$_currentMonth'),
                         padding: const EdgeInsets.all(8),
                         child: GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
@@ -360,9 +381,8 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSunday
-                ? Colors.red
-                : Theme.of(context).colorScheme.primary,
+            color:
+                isSunday ? Colors.red : Theme.of(context).colorScheme.primary,
             fontSize: 14,
           ),
         ),
@@ -396,9 +416,8 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor = isSundayCell
-          ? Colors.red
-          : Theme.of(context).colorScheme.onSurface;
+      textColor =
+          isSundayCell ? Colors.red : Theme.of(context).colorScheme.onSurface;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -457,9 +476,8 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                     '$_currentYear',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                   ),
                   if (CalendarConverter.isLeapYearNormal(_currentYear)) ...[
@@ -474,7 +492,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '✦ Leap',
+                        'Leap ✦',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -587,8 +605,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
               Expanded(
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7,
                     childAspectRatio: 1,
                   ),

@@ -102,7 +102,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shinto => 'Синто';
 
   @override
-  String get aqdas => 'Агдас';
+  String get aqdas => 'Акдас';
 
   @override
   String get nirvana => 'Нирвана';
@@ -141,7 +141,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get today => 'Сегодня';
 
   @override
-  String get leapYear => 'Високосный год';
+  String get leapYear => 'Високосный месяц';
 
   @override
   String get specialDay => 'Особый день';

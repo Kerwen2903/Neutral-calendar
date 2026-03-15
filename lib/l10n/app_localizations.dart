@@ -115,7 +115,7 @@ abstract class AppLocalizations {
   /// No description provided for @normalCalendar.
   ///
   /// In en, this message translates to:
-  /// **'Normal Calendar'**
+  /// **'Gregorian Calendar'**
   String get normalCalendar;
 
   /// No description provided for @neutralCalendar.
@@ -367,7 +367,7 @@ abstract class AppLocalizations {
   /// No description provided for @leapYear.
   ///
   /// In en, this message translates to:
-  /// **'Leap Year'**
+  /// **'Leap month'**
   String get leapYear;
 
   /// No description provided for @specialDay.
