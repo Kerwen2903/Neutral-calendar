@@ -47,6 +47,14 @@ class AppLocalizations {
       _localizedStrings[locale.languageCode]?['lockTextGregorianOnly'] ?? 'Gregorian';
   String get lockTextTimeOnly =>
       _localizedStrings[locale.languageCode]?['lockTextTimeOnly'] ?? 'Time only';
+  String get lockFontStyle =>
+      _localizedStrings[locale.languageCode]?['lockFontStyle'] ?? 'Font';
+  String get lockFontDefault =>
+      _localizedStrings[locale.languageCode]?['lockFontDefault'] ?? 'Default';
+  String get lockFontSerif =>
+      _localizedStrings[locale.languageCode]?['lockFontSerif'] ?? 'Serif';
+  String get lockFontMono =>
+      _localizedStrings[locale.languageCode]?['lockFontMono'] ?? 'Mono';
   String get language =>
       _localizedStrings[locale.languageCode]?['language'] ?? 'Language';
   String get turkmen => 'Türkmen';
@@ -161,6 +169,10 @@ class AppLocalizations {
       'lockTextNeutralOnly': 'Neutral',
       'lockTextGregorianOnly': 'Gregorian',
       'lockTextTimeOnly': 'Time only',
+      'lockFontStyle': 'Font',
+      'lockFontDefault': 'Default',
+      'lockFontSerif': 'Serif',
+      'lockFontMono': 'Mono',
       'language': 'Language',
       'january': 'January',
       'february': 'February',
@@ -223,6 +235,10 @@ class AppLocalizations {
       'lockTextNeutralOnly': 'Нейтральный',
       'lockTextGregorianOnly': 'Григорианский',
       'lockTextTimeOnly': 'Только время',
+      'lockFontStyle': 'Шрифт',
+      'lockFontDefault': 'Обычный',
+      'lockFontSerif': 'Serif',
+      'lockFontMono': 'Моно',
       'language': 'Язык',
       'january': 'Январь',
       'february': 'Февраль',
@@ -285,6 +301,10 @@ class AppLocalizations {
       'lockTextNeutralOnly': 'Bitarap',
       'lockTextGregorianOnly': 'Grigorian',
       'lockTextTimeOnly': 'Diňe wagt',
+      'lockFontStyle': 'Şrift',
+      'lockFontDefault': 'Adaty',
+      'lockFontSerif': 'Serif',
+      'lockFontMono': 'Mono',
       'language': 'Dil',
       'january': 'Ýanwar',
       'february': 'Fewral',

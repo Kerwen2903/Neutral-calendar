@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations_manual.dart';
 import 'screens/home_screen.dart';
 import 'screens/lock_screen.dart';
 
-void main() {
-  runApp(const NeutralCalendarApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(NeutralCalendarApp(prefs: prefs));
 }
 
 /// Falls back to Russian Material localisations for Turkmen
@@ -29,7 +32,8 @@ class _MaterialFallbackDelegate
 }
 
 class NeutralCalendarApp extends StatefulWidget {
-  const NeutralCalendarApp({super.key});
+  final SharedPreferences prefs;
+  const NeutralCalendarApp({super.key, required this.prefs});
 
   @override
   State<NeutralCalendarApp> createState() => _NeutralCalendarAppState();
@@ -40,44 +44,61 @@ class NeutralCalendarApp extends StatefulWidget {
 }
 
 class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
-  Locale _locale = const Locale('ru'); // Default to Russian
-  bool _useNeutralMonthNames = true; // Default to Neutral month names
-  ThemeMode _themeMode = ThemeMode.light; // Default to light theme
-  int _lockScreenColorIndex = 0; // 0=navy, 1=crimson, 2=black, 3=emerald, 4=purple, 5=teal
-  int _lockScreenTextVariant = 0; // 0=both, 1=neutral only, 2=gregorian only, 3=time only
+  late Locale _locale;
+  late bool _useNeutralMonthNames;
+  late ThemeMode _themeMode;
+  late int _lockScreenColorIndex;
+  late int _lockScreenTextVariant;
+  late int _lockScreenFontStyle; // 0=default, 1=serif, 2=monospace
+
+  SharedPreferences get _prefs => widget.prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _locale = Locale(_prefs.getString('locale') ?? 'ru');
+    _useNeutralMonthNames = _prefs.getBool('useNeutralMonthNames') ?? true;
+    _themeMode = (_prefs.getBool('isDarkMode') ?? false)
+        ? ThemeMode.dark
+        : ThemeMode.light;
+    _lockScreenColorIndex = _prefs.getInt('lockScreenColorIndex') ?? 0;
+    _lockScreenTextVariant = _prefs.getInt('lockScreenTextVariant') ?? 0;
+    _lockScreenFontStyle = _prefs.getInt('lockScreenFontStyle') ?? 0;
+  }
 
   Locale get selectedLocale => _locale;
   int get lockScreenColorIndex => _lockScreenColorIndex;
   int get lockScreenTextVariant => _lockScreenTextVariant;
+  int get lockScreenFontStyle => _lockScreenFontStyle;
 
   void setLocale(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
+    setState(() { _locale = locale; });
+    _prefs.setString('locale', locale.languageCode);
   }
 
   void toggleMonthNames(bool useNeutral) {
-    setState(() {
-      _useNeutralMonthNames = useNeutral;
-    });
+    setState(() { _useNeutralMonthNames = useNeutral; });
+    _prefs.setBool('useNeutralMonthNames', useNeutral);
   }
 
   void toggleTheme(bool isDark) {
-    setState(() {
-      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
-    });
+    setState(() { _themeMode = isDark ? ThemeMode.dark : ThemeMode.light; });
+    _prefs.setBool('isDarkMode', isDark);
   }
 
   void setLockScreenColor(int index) {
-    setState(() {
-      _lockScreenColorIndex = index;
-    });
+    setState(() { _lockScreenColorIndex = index; });
+    _prefs.setInt('lockScreenColorIndex', index);
   }
 
   void setLockScreenTextVariant(int index) {
-    setState(() {
-      _lockScreenTextVariant = index;
-    });
+    setState(() { _lockScreenTextVariant = index; });
+    _prefs.setInt('lockScreenTextVariant', index);
+  }
+
+  void setLockScreenFontStyle(int index) {
+    setState(() { _lockScreenFontStyle = index; });
+    _prefs.setInt('lockScreenFontStyle', index);
   }
 
   bool get useNeutralMonthNames => _useNeutralMonthNames;

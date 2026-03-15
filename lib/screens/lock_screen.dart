@@ -25,6 +25,13 @@ class LockScreen extends StatefulWidget {
     Color(0xFF1A3A4A), // dark teal
   ];
 
+  // Available font families for lock screen text
+  static const List<String?> fontFamilies = [
+    null,       // default (sans-serif)
+    'serif',    // serif
+    'monospace', // monospace
+  ];
+
   const LockScreen({super.key, required this.child, this.standaloneRoute = false});
 
   @override
@@ -138,6 +145,8 @@ class _LockScreenState extends State<LockScreen>
     // 0=both, 1=neutral only, 2=gregorian only, 3=time only
     final showGregorian = textVariant == 0 || textVariant == 2;
     final showNeutral = textVariant == 0 || textVariant == 1;
+    final fontStyleIndex = NeutralCalendarApp.of(context)?.lockScreenFontStyle ?? 0;
+    final fontFamily = LockScreen.fontFamilies[fontStyleIndex];
 
     // Gregorian date
     final gregDay        = _now.day;
@@ -182,7 +191,8 @@ class _LockScreenState extends State<LockScreen>
                     if (showGregorian)
                       Text(
                         '$gregWeekdayStr. $gregDay $gregMonth',
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontFamily: fontFamily,
                           color: Colors.white70,
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
@@ -195,7 +205,8 @@ class _LockScreenState extends State<LockScreen>
                     // ── Clock ──────────────────────────────────────────
                     Text(
                       timeStr,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily: fontFamily,
                         color: Colors.white,
                         fontSize: 78,
                         fontWeight: FontWeight.w300,
@@ -211,7 +222,8 @@ class _LockScreenState extends State<LockScreen>
                     if (showNeutral)
                       Text(
                         '$neutralWeekdayStr. ${neutralDate.day} $neutralMonthName',
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontFamily: fontFamily,
                           color: Colors.white70,
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
