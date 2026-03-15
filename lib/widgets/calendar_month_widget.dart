@@ -93,22 +93,22 @@ class CalendarMonthWidget extends StatelessWidget {
               final totalCells = firstWeekday + daysInMonth;
               final weeksNeeded = (totalCells / 7).ceil();
 
-              // Cell size for positioning the leap day
+              // Cell size — account for 2px mainAxisSpacing between rows
               final cellW = (constraints.maxWidth - 2 * 6) / 7;
-              final cellH = constraints.maxHeight /
-                  (weeksNeeded + (isNeutralLeapFeb ? 0.55 : 0));
+              final leapExtra = isNeutralLeapFeb ? 1 : 0;
+              final totalRows = weeksNeeded + leapExtra;
+              final totalSpacing = (totalRows - 1) * 2.0;
+              final cellH = (constraints.maxHeight - totalSpacing) / (weeksNeeded + (isNeutralLeapFeb ? 0.55 : 0));
 
               return Stack(
+                clipBehavior: Clip.none,
                 children: [
                   GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.zero,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 7,
-                      childAspectRatio: constraints.maxWidth /
-                          (constraints.maxHeight /
-                              (weeksNeeded + (isNeutralLeapFeb ? 0.55 : 0))) /
-                          7,
+                      childAspectRatio: cellW / cellH,
                       crossAxisSpacing: 2,
                       mainAxisSpacing: 2,
                     ),
@@ -190,10 +190,10 @@ class CalendarMonthWidget extends StatelessWidget {
                   if (isNeutralLeapFeb)
                     Positioned(
                       // sits below the last real row, shifted to around col 3.4 (between Thu & Fri)
-                      top: weeksNeeded * (cellH + 2) + 2,
+                      top: weeksNeeded * (cellH + 2),
                       left: 3.4 * (cellW + 2),
                       width: cellW,
-                      height: cellH * 0.9,
+                      height: cellH * 0.5,
                       child: _buildNeutralLeapDay31Cell(context, calendarType),
                     ),
                 ],
