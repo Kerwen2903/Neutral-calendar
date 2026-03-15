@@ -97,6 +97,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildFontStyleChip(
+    BuildContext context,
+    int index,
+    String label,
+  ) {
+    final appState = NeutralCalendarApp.of(context);
+    final selected = (appState?.lockScreenFontStyle ?? 0) == index;
+    // Show label in the actual font family for preview
+    final fontFamily = LockScreen.fontFamilies[index];
+    return ChoiceChip(
+      label: Text(label, style: TextStyle(fontFamily: fontFamily)),
+      selected: selected,
+      onSelected: (_) {
+        playClick();
+        appState?.setLockScreenFontStyle(index);
+        setState(() {});
+      },
+    );
+  }
+
   Widget _buildTextVariantChip(
     BuildContext context,
     int index,
@@ -256,6 +276,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildTextVariantChip(context, 1, localizations.lockTextNeutralOnly),
                     _buildTextVariantChip(context, 2, localizations.lockTextGregorianOnly),
                     _buildTextVariantChip(context, 3, localizations.lockTextTimeOnly),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // ── Font style picker ─────────────────────────────────
+                Text(
+                  localizations.lockFontStyle,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildFontStyleChip(context, 0, localizations.lockFontDefault),
+                    _buildFontStyleChip(context, 1, localizations.lockFontSerif),
+                    _buildFontStyleChip(context, 2, localizations.lockFontMono),
                   ],
                 ),
               ],
