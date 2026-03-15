@@ -43,10 +43,12 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   Locale _locale = const Locale('ru'); // Default to Russian
   bool _useNeutralMonthNames = true; // Default to Neutral month names
   ThemeMode _themeMode = ThemeMode.light; // Default to light theme
-  int _lockScreenColorIndex = 0; // 0=navy, 1=crimson, 2=black
+  int _lockScreenColorIndex = 0; // 0=navy, 1=crimson, 2=black, 3=emerald, 4=purple, 5=teal
+  int _lockScreenTextVariant = 0; // 0=both, 1=neutral only, 2=gregorian only, 3=time only
 
   Locale get selectedLocale => _locale;
   int get lockScreenColorIndex => _lockScreenColorIndex;
+  int get lockScreenTextVariant => _lockScreenTextVariant;
 
   void setLocale(Locale locale) {
     setState(() {
@@ -69,6 +71,12 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   void setLockScreenColor(int index) {
     setState(() {
       _lockScreenColorIndex = index;
+    });
+  }
+
+  void setLockScreenTextVariant(int index) {
+    setState(() {
+      _lockScreenTextVariant = index;
     });
   }
 

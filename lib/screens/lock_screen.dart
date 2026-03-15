@@ -20,6 +20,9 @@ class LockScreen extends StatefulWidget {
     Color(0xFF0A1628), // dark navy
     Color(0xFF6B1A1A), // dark crimson
     Color(0xFF000000), // black
+    Color(0xFF0B3D2E), // dark emerald
+    Color(0xFF2D1B4E), // dark purple
+    Color(0xFF1A3A4A), // dark teal
   ];
 
   const LockScreen({super.key, required this.child, this.standaloneRoute = false});
@@ -128,9 +131,13 @@ class _LockScreenState extends State<LockScreen>
     if (_dismissed) return widget.child;
 
     final loc = AppLocalizations.of(context)!;
-    // Read colour choice from global app state (set in SettingsScreen)
+    // Read choices from global app state (set in SettingsScreen)
     final colorIndex = NeutralCalendarApp.of(context)?.lockScreenColorIndex ?? 0;
     final bg = LockScreen.bgColors[colorIndex];
+    final textVariant = NeutralCalendarApp.of(context)?.lockScreenTextVariant ?? 0;
+    // 0=both, 1=neutral only, 2=gregorian only, 3=time only
+    final showGregorian = textVariant == 0 || textVariant == 2;
+    final showNeutral = textVariant == 0 || textVariant == 1;
 
     // Gregorian date
     final gregDay        = _now.day;
@@ -172,17 +179,18 @@ class _LockScreenState extends State<LockScreen>
                     const Spacer(flex: 2),
 
                     // ── Gregorian date ─────────────────────────────────
-                    Text(
-                      '$gregWeekdayStr. $gregDay $gregMonth',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        letterSpacing: 1.2,
+                    if (showGregorian)
+                      Text(
+                        '$gregWeekdayStr. $gregDay $gregMonth',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: showGregorian ? 12 : 0),
 
                     // ── Clock ──────────────────────────────────────────
                     Text(
@@ -197,18 +205,19 @@ class _LockScreenState extends State<LockScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: showNeutral ? 16 : 0),
 
                     // ── Neutral date ───────────────────────────────────
-                    Text(
-                      '$neutralWeekdayStr. ${neutralDate.day} $neutralMonthName',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        letterSpacing: 1.2,
+                    if (showNeutral)
+                      Text(
+                        '$neutralWeekdayStr. ${neutralDate.day} $neutralMonthName',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    ),
 
                     const Spacer(flex: 3),
 

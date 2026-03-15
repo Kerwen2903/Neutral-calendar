@@ -97,6 +97,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildTextVariantChip(
+    BuildContext context,
+    int index,
+    String label,
+    _NeutralCalendarAppState? appState,
+  ) {
+    final selected = (appState?.lockScreenTextVariant ?? 0) == index;
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) {
+        playClick();
+        appState?.setLockScreenTextVariant(index);
+        setState(() {});
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -171,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const Divider(),
-          // ── Lock screen background colour ─────────────────────────
+          // ── Lock screen styles ─────────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
@@ -188,7 +206,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Row(
+                // ── Background colour picker ──────────────────────────
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
                   children: List.generate(LockScreen.bgColors.length, (i) {
                     final selected =
                         (appState?.lockScreenColorIndex ?? 0) == i;
@@ -200,7 +221,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.only(right: 12),
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
@@ -220,6 +240,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     );
                   }),
+                ),
+                const SizedBox(height: 16),
+                // ── Text variant picker ───────────────────────────────
+                Text(
+                  localizations.lockTextVariant,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildTextVariantChip(context, 0, localizations.lockTextBoth, appState),
+                    _buildTextVariantChip(context, 1, localizations.lockTextNeutralOnly, appState),
+                    _buildTextVariantChip(context, 2, localizations.lockTextGregorianOnly, appState),
+                    _buildTextVariantChip(context, 3, localizations.lockTextTimeOnly, appState),
+                  ],
                 ),
               ],
             ),
