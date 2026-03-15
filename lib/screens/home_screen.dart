@@ -17,12 +17,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _screens = [
-    MainCalendarScreen(),
-    GregorianCalendarScreen(),
-    ComparisonScreen(),
-    ConverterScreen(),
-    SettingsScreen(),
+  List<Widget> get _screens => [
+    const MainCalendarScreen(),
+    const GregorianCalendarScreen(),
+    ComparisonScreen(onBack: () => setState(() => _selectedIndex = 0)),
+    const ConverterScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -40,9 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _NavItem(Icons.settings, localizations.settings),
     ];
 
+    final hideNavBar = _selectedIndex == 2; // Comparison screen — full height
+
     return Scaffold(
       body: _screens[_selectedIndex],
-      bottomNavigationBar: Container(
+      bottomNavigationBar: hideNavBar ? null : Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
           boxShadow: [
