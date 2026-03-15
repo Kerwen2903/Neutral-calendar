@@ -272,7 +272,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       children: [
         // Normal Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 5 : 1,
+          flex: isNeutralLeapFeb ? 4 : 1,
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(cardPadding),
