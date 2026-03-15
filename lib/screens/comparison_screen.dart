@@ -263,14 +263,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   }
 
   Widget _buildCalendarPair(AppLocalizations localizations, bool useNeutral) {
-    final isNeutralLeapFeb = _neutralMonth == 2 &&
-        CalendarConverter.isLeapYearNormal(_neutralYear);
-
     return Column(
       children: [
         // Normal Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 5 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -292,10 +288,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ),
           ),
         ),
-        SizedBox(height: isNeutralLeapFeb ? 2 : 4),
+        const SizedBox(height: 4),
         // Neutral Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 6 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
