@@ -8,9 +8,7 @@ import '../services/calendar_converter.dart';
 import '../main.dart';
 
 class ComparisonScreen extends StatefulWidget {
-  final VoidCallback? onBack;
-
-  const ComparisonScreen({super.key, this.onBack});
+  const ComparisonScreen({super.key});
 
   @override
   State<ComparisonScreen> createState() => _ComparisonScreenState();
@@ -182,31 +180,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     final useNeutral = appState?.useNeutralMonthNames ?? true;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: widget.onBack != null
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () { playClick(); widget.onBack!(); },
-              )
-            : null,
-        title: Text(localizations.comparison),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.today),
-            onPressed: () {
-              playClick();
-              setState(() {
-                _normalYear = DateTime.now().year;
-                _normalMonth = DateTime.now().month;
-                _neutralYear = DateTime.now().year;
-                _neutralMonth = DateTime.now().month;
-                _onNormalDaySelected(DateTime.now().day);
-              });
-            },
-          ),
-        ],
-      ),
-      body: GestureDetector(
+      body: SafeArea(
+        child: GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity == null) return;
           if (details.primaryVelocity! < -200) {
@@ -247,6 +222,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     ),
                   ),
                 ),
+                _todayButton(),
                 _circleArrow(Icons.chevron_right, _nextMonth),
               ],
             ),
@@ -282,14 +258,19 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         ],
       ),
       ),
+      ),
     );
   }
 
   Widget _buildCalendarPair(AppLocalizations localizations, bool useNeutral) {
+    final isNeutralLeapFeb = _neutralMonth == 2 &&
+        CalendarConverter.isLeapYearNormal(_neutralYear);
+
     return Column(
       children: [
         // Normal Calendar
         Expanded(
+          flex: isNeutralLeapFeb ? 5 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -314,6 +295,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         const SizedBox(height: 4),
         // Neutral Calendar
         Expanded(
+          flex: isNeutralLeapFeb ? 6 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -336,6 +318,30 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _todayButton() {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.today, size: 18),
+        onPressed: () {
+          playClick();
+          setState(() {
+            _normalYear = DateTime.now().year;
+            _normalMonth = DateTime.now().month;
+            _neutralYear = DateTime.now().year;
+            _neutralMonth = DateTime.now().month;
+            _onNormalDaySelected(DateTime.now().day);
+          });
+        },
+        padding: const EdgeInsets.all(6),
+        constraints: const BoxConstraints(),
+      ),
     );
   }
 
