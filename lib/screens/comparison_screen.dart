@@ -8,7 +8,9 @@ import '../services/calendar_converter.dart';
 import '../main.dart';
 
 class ComparisonScreen extends StatefulWidget {
-  const ComparisonScreen({super.key});
+  final VoidCallback? onBack;
+
+  const ComparisonScreen({super.key, this.onBack});
 
   @override
   State<ComparisonScreen> createState() => _ComparisonScreenState();
@@ -181,6 +183,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: widget.onBack != null
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () { playClick(); widget.onBack!(); },
+              )
+            : null,
         title: Text(localizations.comparison),
         actions: [
           IconButton(
@@ -278,14 +286,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   }
 
   Widget _buildCalendarPair(AppLocalizations localizations, bool useNeutral) {
-    final isNeutralLeapFeb = _neutralMonth == 2 &&
-        CalendarConverter.isLeapYearNormal(_neutralYear);
-
     return Column(
       children: [
         // Normal Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 5 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -310,7 +314,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         const SizedBox(height: 4),
         // Neutral Calendar
         Expanded(
-          flex: isNeutralLeapFeb ? 6 : 1,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
