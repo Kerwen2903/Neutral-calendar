@@ -46,10 +46,13 @@ class NeutralCalendarApp extends StatefulWidget {
 class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   late Locale _locale;
   late bool _useNeutralMonthNames;
+  late bool _useAllChristianCombo;
   late ThemeMode _themeMode;
   late int _lockScreenColorIndex;
   late int _lockScreenTextVariant;
   late int _lockScreenFontStyle; // 0=default, 1=serif, 2=monospace
+  late int _lockScreenBgImage; // -1=solid color, 0+=image index, -2=custom gallery image
+  String? _lockScreenCustomImage; // file path from gallery
 
   SharedPreferences get _prefs => widget.prefs;
 
@@ -58,18 +61,23 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
     super.initState();
     _locale = Locale(_prefs.getString('locale') ?? 'ru');
     _useNeutralMonthNames = _prefs.getBool('useNeutralMonthNames') ?? true;
+    _useAllChristianCombo = _prefs.getBool('useAllChristianCombo') ?? false;
     _themeMode = (_prefs.getBool('isDarkMode') ?? false)
         ? ThemeMode.dark
         : ThemeMode.light;
     _lockScreenColorIndex = _prefs.getInt('lockScreenColorIndex') ?? 0;
     _lockScreenTextVariant = _prefs.getInt('lockScreenTextVariant') ?? 0;
     _lockScreenFontStyle = _prefs.getInt('lockScreenFontStyle') ?? 0;
+    _lockScreenBgImage = _prefs.getInt('lockScreenBgImage') ?? -1;
+    _lockScreenCustomImage = _prefs.getString('lockScreenCustomImage');
   }
 
   Locale get selectedLocale => _locale;
   int get lockScreenColorIndex => _lockScreenColorIndex;
   int get lockScreenTextVariant => _lockScreenTextVariant;
   int get lockScreenFontStyle => _lockScreenFontStyle;
+  int get lockScreenBgImage => _lockScreenBgImage;
+  String? get lockScreenCustomImage => _lockScreenCustomImage;
 
   void setLocale(Locale locale) {
     setState(() { _locale = locale; });
@@ -79,6 +87,11 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
   void toggleMonthNames(bool useNeutral) {
     setState(() { _useNeutralMonthNames = useNeutral; });
     _prefs.setBool('useNeutralMonthNames', useNeutral);
+  }
+
+  void setComboCalendarMode(bool useAllChristian) {
+    setState(() { _useAllChristianCombo = useAllChristian; });
+    _prefs.setBool('useAllChristianCombo', useAllChristian);
   }
 
   void toggleTheme(bool isDark) {
@@ -101,7 +114,28 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
     _prefs.setInt('lockScreenFontStyle', index);
   }
 
+  void setLockScreenBgImage(int index) {
+    setState(() { _lockScreenBgImage = index; });
+    _prefs.setInt('lockScreenBgImage', index);
+  }
+
+  void setLockScreenCustomImage(String? path) {
+    setState(() {
+      _lockScreenCustomImage = path;
+      if (path != null) {
+        _lockScreenBgImage = -2; // -2 = custom gallery image
+      }
+    });
+    if (path != null) {
+      _prefs.setString('lockScreenCustomImage', path);
+    } else {
+      _prefs.remove('lockScreenCustomImage');
+    }
+    _prefs.setInt('lockScreenBgImage', _lockScreenBgImage);
+  }
+
   bool get useNeutralMonthNames => _useNeutralMonthNames;
+  bool get useAllChristianCombo => _useAllChristianCombo;
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   @override
@@ -123,6 +157,9 @@ class _NeutralCalendarAppState extends State<NeutralCalendarApp> {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF146B5D),
           brightness: Brightness.light,
+        ).copyWith(
+          primaryContainer: Colors.white,
+          onPrimaryContainer: Colors.black87,
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),

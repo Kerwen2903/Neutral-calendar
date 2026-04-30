@@ -65,17 +65,13 @@ class CalendarConverter {
     int dayOfYear = targetDate.difference(startOfYear).inDays + 1;
 
     // The Neutral calendar has no leap years.
-    // In a Gregorian leap year, skip the leap day (Feb 29 = day 60):
-    //   • Feb 29 itself is treated as Feb 28 in the Neutral calendar.
-    //   • All days from Mar 1 onward have their dayOfYear decremented by 1
-    //     so that the Neutral mapping stays identical to non-leap years.
-    if (isLeapYearNormal(normalDate.year)) {
-      if (dayOfYear == 60) {
-        // Feb 29 → treat as Feb 28 in Neutral
-        dayOfYear = 59;
-      } else if (dayOfYear > 60) {
-        dayOfYear -= 1;
-      }
+    // In a Gregorian leap year, absorb the extra day at Gregorian Mar 2 (day 62):
+    //   • Gregorian Feb 29 (day 60) → neutral Feb 29 (day 60). Same day-of-year.
+    //   • Gregorian Mar 1 (day 61) → neutral Feb 30 (day 61). Same day-of-year.
+    //   • Gregorian Mar 2 (day 62) → neutral day 61 = neutral Feb 30 (absorbed).
+    //   • All days from Mar 3 onward are decremented by 1.
+    if (isLeapYearNormal(normalDate.year) && dayOfYear > 61) {
+      dayOfYear -= 1;
     }
 
     // Convert to Neutral calendar month and day
@@ -112,10 +108,11 @@ class CalendarConverter {
     }
     dayOfYear += neutralDate.day;
 
-    // In a Gregorian leap year, re-insert the leap day:
-    // any Neutral day that falls on or after position 60 (what would be
-    // Gregorian Mar 1 in a non-leap year) needs +1 to skip over Feb 29.
-    if (isLeapYearNormal(neutralDate.year) && dayOfYear >= 60) {
+    // In a Gregorian leap year, re-insert the leap day for neutral Mar 1 onward.
+    // Neutral Feb 29 (day 60) → Gregorian day 60 = Feb 29 (no shift).
+    // Neutral Feb 30 (day 61) → Gregorian day 61 = Mar 1 (no shift).
+    // Neutral Mar 1 (day 62) onward: +1 to skip over Gregorian Feb 29.
+    if (isLeapYearNormal(neutralDate.year) && dayOfYear > 61) {
       dayOfYear += 1;
     }
 
@@ -159,13 +156,9 @@ class CalendarConverter {
     final startOfYear = DateTime(year, 1, 1);
     int dayOfYear = normalDate.difference(startOfYear).inDays + 1;
 
-    // Absorb Gregorian leap day: neutral calendar has no Feb 29.
-    if (isLeapYearNormal(year)) {
-      if (dayOfYear == 60) {
-        dayOfYear = 59; // Feb 29 → treated as Feb 28 in Neutral
-      } else if (dayOfYear > 60) {
-        dayOfYear -= 1;
-      }
+    // Absorb Gregorian leap day at Mar 2 (day 62).
+    if (isLeapYearNormal(year) && dayOfYear > 61) {
+      dayOfYear -= 1;
     }
 
     // Convert to Neutral calendar month and day
@@ -237,5 +230,74 @@ class CalendarConverter {
     // Year starts on Sunday (index 6)
     // Add total days and mod 7 to get current month's starting weekday
     return (6 + totalDays) % 7;
+  }
+
+  // Convert Gregorian → All Christian for the comparison screen.
+  // The Gregorian leap day is NOT absorbed: Gregorian day-of-year maps
+  // directly to All Christian day-of-year using neutral month lengths
+  // (with Feb = 31 days in leap years instead of neutral's 30).
+  // Result: Gregorian Feb 29 → All Christian Feb 29,
+  //         Gregorian Mar 1  → All Christian Feb 30, etc.
+  static CalendarDate normalToAllChristian(CalendarDate normalDate) {
+    final startOfYear = DateTime(normalDate.year, 1, 1);
+    final targetDate =
+        DateTime(normalDate.year, normalDate.month, normalDate.day);
+    int dayOfYear = targetDate.difference(startOfYear).inDays + 1;
+
+    int month = 1;
+    int day = dayOfYear;
+    while (month <= 12) {
+      final dim = (month == 2 && isLeapYearNormal(normalDate.year))
+          ? 31
+          : getDaysInMonthNeutral(normalDate.year, month);
+      if (day <= dim) break;
+      day -= dim;
+      month++;
+    }
+    return CalendarDate(
+      year: normalDate.year,
+      month: month,
+      day: day,
+      calendarType: CalendarType.neutral,
+    );
+  }
+
+  // Convert All Christian → Gregorian for the comparison screen.
+  // Computes All Christian day-of-year (Feb = 31 in leap years) and maps it
+  // straight to the Gregorian date with the same day-of-year number.
+  // Result: All Christian Feb 29 → Gregorian Feb 29,
+  //         All Christian Feb 30 → Gregorian Mar 1, etc.
+  static CalendarDate allChristianToNormal(CalendarDate allChristianDate) {
+    int dayOfYear = 0;
+    for (int m = 1; m < allChristianDate.month; m++) {
+      dayOfYear += (m == 2 && isLeapYearNormal(allChristianDate.year))
+          ? 31
+          : getDaysInMonthNeutral(allChristianDate.year, m);
+    }
+    dayOfYear += allChristianDate.day;
+
+    final startOfYear = DateTime(allChristianDate.year, 1, 1);
+    final targetDate = startOfYear.add(Duration(days: dayOfYear - 1));
+    return CalendarDate(
+      year: targetDate.year,
+      month: targetDate.month,
+      day: targetDate.day,
+      calendarType: CalendarType.normal,
+    );
+  }
+
+  // Get first day of week for a month in All Christian calendar.
+  // Like getFirstWeekdayNeutral but the year starts on the real Gregorian
+  // weekday of Jan 1, and Feb counts as 31 days in leap years so that the
+  // week flows correctly for March and beyond.
+  static int getFirstWeekdayAllChristian(int year, int month) {
+    int totalDays = 0;
+    for (int m = 1; m < month; m++) {
+      totalDays += (m == 2 && isLeapYearNormal(year))
+          ? 31
+          : getDaysInMonthNeutral(year, m);
+    }
+    final jan1Weekday = DateTime(year, 1, 1).weekday - 1; // 0=Mon..6=Sun
+    return (jan1Weekday + totalDays) % 7;
   }
 }

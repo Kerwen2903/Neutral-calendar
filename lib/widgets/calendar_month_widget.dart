@@ -13,6 +13,7 @@ class CalendarMonthWidget extends StatelessWidget {
   final Function(int day)? onDaySelected;
   final Function(int year, int month, int day)? onPreviousMonthDaySelected;
   final Function(int year, int month, int day)? onNextMonthDaySelected;
+  final int? fixedVisualRows;
 
   const CalendarMonthWidget({
     super.key,
@@ -23,18 +24,23 @@ class CalendarMonthWidget extends StatelessWidget {
     this.onDaySelected,
     this.onPreviousMonthDaySelected,
     this.onNextMonthDaySelected,
+    this.fixedVisualRows,
   });
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    // For neutral calendar, convert today's Gregorian date to neutral for "today" highlight
+    // For neutral/allChristian calendar, convert today's Gregorian date to neutral for "today" highlight
     final now = DateTime.now();
     int todayYear, todayMonth, todayDay;
-    if (calendarType == CalendarType.neutral) {
+    if (calendarType == CalendarType.neutral || calendarType == CalendarType.allChristian) {
       final todayNeutral = CalendarConverter.normalToNeutral(
-        CalendarDate(year: now.year, month: now.month, day: now.day, calendarType: CalendarType.normal),
+        CalendarDate(
+            year: now.year,
+            month: now.month,
+            day: now.day,
+            calendarType: CalendarType.normal),
       );
       todayYear = todayNeutral.year;
       todayMonth = todayNeutral.month;
@@ -45,14 +51,20 @@ class CalendarMonthWidget extends StatelessWidget {
       todayDay = now.day;
     }
 
-    // Get days in month (calculation value — unchanged by leap years on Neutral)
+    // All Christian Feb in a leap year has 31 days (day 29 = leap day inside the grid).
     final daysInMonth = calendarType == CalendarType.normal
         ? CalendarConverter.getDaysInMonthNormal(year, month)
-        : CalendarConverter.getDaysInMonthNeutral(year, month);
+        : (calendarType == CalendarType.allChristian &&
+                month == 2 &&
+                CalendarConverter.isLeapYearNormal(year))
+            ? 31
+            : CalendarConverter.getDaysInMonthNeutral(year, month);
 
     // On the Neutral calendar, Feb 31 is shown as a visual-only leap day in leap years.
     // It is NOT included in any date calculations.
 
+    // Neutral: Feb 31 is a visual-only leap day shown BELOW the grid.
+    // All Christian: Feb 31 is included inside the grid normally.
     final isNeutralLeapFeb = calendarType == CalendarType.neutral &&
         month == 2 &&
         CalendarConverter.isLeapYearNormal(year);
@@ -61,10 +73,10 @@ class CalendarMonthWidget extends StatelessWidget {
     int firstWeekday;
     if (calendarType == CalendarType.normal) {
       final firstDayOfMonth = DateTime(year, month, 1);
-      firstWeekday =
-          firstDayOfMonth.weekday - 1; // Convert to 0-based (Mon = 0)
+      firstWeekday = firstDayOfMonth.weekday - 1; // Convert to 0-based (Mon = 0)
+    } else if (calendarType == CalendarType.allChristian) {
+      firstWeekday = CalendarConverter.getFirstWeekdayAllChristian(year, month);
     } else {
-      // For Neutral calendar, use its own calculation
       firstWeekday = CalendarConverter.getFirstWeekdayNeutral(year, month);
     }
 
@@ -89,118 +101,130 @@ class CalendarMonthWidget extends StatelessWidget {
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Calculate number of weeks needed (rows) using display count
-              final totalCells = firstWeekday + daysInMonth;
-              final weeksNeeded = (totalCells / 7).ceil();
+              // 6 grid rows + 1 extra when leap day needs positioning below
+              const gridRows = 6;
+              final totalVisualRows = fixedVisualRows ?? (isNeutralLeapFeb ? gridRows + 1 : gridRows);
 
               // Cell size — account for 2px mainAxisSpacing between rows
               final cellW = (constraints.maxWidth - 2 * 6) / 7;
-              final totalRows = weeksNeeded + (isNeutralLeapFeb ? 1 : 0);
-              final totalSpacing = (totalRows - 1) * 2.0;
-              final cellH = (constraints.maxHeight - totalSpacing) / totalRows;
+              final totalSpacing = (totalVisualRows - 1) * 2.0;
+              final cellH =
+                  (constraints.maxHeight - totalSpacing) / totalVisualRows;
 
-              final gridItemCount = isNeutralLeapFeb
-                  ? (weeksNeeded + 1) * 7
-                  : weeksNeeded * 7;
-              // Leap day 31 goes in the center column (col 3) of the extra row
-              final leapDayIndex = weeksNeeded * 7 + 3;
+              final gridItemCount = gridRows * 7;
 
-              return GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: cellW / cellH,
-                  crossAxisSpacing: 2,
-                  mainAxisSpacing: 2,
-                ),
-                itemCount: gridItemCount,
-                itemBuilder: (context, index) {
-                  // Extra row for neutral leap day
-                  if (isNeutralLeapFeb && index >= weeksNeeded * 7) {
-                    if (index == leapDayIndex) {
+              return Stack(
+                children: [
+                  GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                      childAspectRatio: cellW / cellH,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 2,
+                    ),
+                    itemCount: gridItemCount,
+                    itemBuilder: (context, index) {
+                      // Previous month days
+                      if (index < firstWeekday) {
+                        final prevMonth = month == 1 ? 12 : month - 1;
+                        final prevYear = month == 1 ? year - 1 : year;
+                        final int daysInPrevMonth;
+                        if (calendarType == CalendarType.normal) {
+                          daysInPrevMonth = CalendarConverter.getDaysInMonthNormal(prevYear, prevMonth);
+                        } else if (calendarType == CalendarType.allChristian &&
+                            prevMonth == 2 &&
+                            CalendarConverter.isLeapYearNormal(prevYear)) {
+                          daysInPrevMonth = 31;
+                        } else {
+                          daysInPrevMonth = CalendarConverter.getDaysInMonthNeutral(prevYear, prevMonth);
+                        }
+                        final day =
+                            daysInPrevMonth - (firstWeekday - index - 1);
+                        return _buildDayCell(
+                          day,
+                          false,
+                          false,
+                          calendarType,
+                          isDisabled: true,
+                          onTap: onPreviousMonthDaySelected != null
+                              ? () => onPreviousMonthDaySelected!(
+                                  prevYear, prevMonth, day)
+                              : null,
+                        );
+                      }
+
+                      // Next month days
+                      if (index >= firstWeekday + daysInMonth) {
+                        final nextMonth = month == 12 ? 1 : month + 1;
+                        final nextYear = month == 12 ? year + 1 : year;
+                        final day = index - firstWeekday - daysInMonth + 1;
+                        return _buildDayCell(
+                          day,
+                          false,
+                          false,
+                          calendarType,
+                          isDisabled: true,
+                          onTap: onNextMonthDaySelected != null
+                              ? () => onNextMonthDaySelected!(
+                                  nextYear, nextMonth, day)
+                              : null,
+                        );
+                      }
+
+                      // Current month days (1..daysInMonth)
+                      final day = index - firstWeekday + 1;
+                      final isToday = todayYear == year &&
+                          todayMonth == month &&
+                          todayDay == day;
+                      final isSelected = selectedDay != null &&
+                          selectedDay! <= daysInMonth &&
+                          selectedDay == day;
+
+                      // Sunday column (index % 7 == 6) — bright red
+                      final isSundayCell = index % 7 == 6;
+
+                      // Gregorian Feb 29 — actual leap day (amber highlight)
+                      final isGregorianLeapDay =
+                          calendarType == CalendarType.normal &&
+                              month == 2 &&
+                              day == 29 &&
+                              CalendarConverter.isLeapYearNormal(year);
+
+                      // All Christian Feb 31 — leap day inside the grid (amber highlight)
+                      final isAllChristianLeapDay =
+                          calendarType == CalendarType.allChristian &&
+                              month == 2 &&
+                              day == 31 &&
+                              CalendarConverter.isLeapYearNormal(year);
+
                       return _buildDayCell(
+                        day,
+                        isToday,
+                        isSelected,
+                        calendarType,
+                        isLeapDay: isGregorianLeapDay || isAllChristianLeapDay,
+                        isSundayHighlight: isSundayCell,
+                      );
+                    },
+                  ),
+                  // Neutral Feb 31 — positioned below grid, centered (col 3)
+                  if (isNeutralLeapFeb)
+                    Positioned(
+                      top: gridRows * (cellH + 2),
+                      left: 3 * (cellW + 2),
+                      width: cellW,
+                      height: cellH,
+                      child: _buildDayCell(
                         31,
                         false,
                         selectedDay == 31,
                         calendarType,
                         isLeapDay: true,
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }
-
-                  // Previous month days
-                  if (index < firstWeekday) {
-                    final prevMonth = month == 1 ? 12 : month - 1;
-                    final prevYear = month == 1 ? year - 1 : year;
-                    final daysInPrevMonth =
-                        calendarType == CalendarType.normal
-                            ? CalendarConverter.getDaysInMonthNormal(
-                                prevYear, prevMonth)
-                            : CalendarConverter.getDaysInMonthNeutral(
-                                prevYear, prevMonth);
-                    final day =
-                        daysInPrevMonth - (firstWeekday - index - 1);
-                    return _buildDayCell(
-                      day,
-                      false,
-                      false,
-                      calendarType,
-                      isDisabled: true,
-                      onTap: onPreviousMonthDaySelected != null
-                          ? () => onPreviousMonthDaySelected!(
-                              prevYear, prevMonth, day)
-                          : null,
-                    );
-                  }
-
-                  // Next month days
-                  if (index >= firstWeekday + daysInMonth) {
-                    final nextMonth = month == 12 ? 1 : month + 1;
-                    final nextYear = month == 12 ? year + 1 : year;
-                    final day = index - firstWeekday - daysInMonth + 1;
-                    return _buildDayCell(
-                      day,
-                      false,
-                      false,
-                      calendarType,
-                      isDisabled: true,
-                      onTap: onNextMonthDaySelected != null
-                          ? () => onNextMonthDaySelected!(
-                              nextYear, nextMonth, day)
-                          : null,
-                    );
-                  }
-
-                  // Current month days (1..daysInMonth)
-                  final day = index - firstWeekday + 1;
-                  final isToday = todayYear == year &&
-                      todayMonth == month &&
-                      todayDay == day;
-                  final isSelected = selectedDay != null &&
-                      selectedDay! <= daysInMonth &&
-                      selectedDay == day;
-
-                  // Sunday column (index % 7 == 6) — bright red
-                  final isSundayCell = index % 7 == 6;
-
-                  // Gregorian Feb 29 — actual leap day (amber highlight)
-                  final isGregorianLeapDay =
-                      calendarType == CalendarType.normal &&
-                          month == 2 &&
-                          day == 29 &&
-                          CalendarConverter.isLeapYearNormal(year);
-
-                  return _buildDayCell(
-                    day,
-                    isToday,
-                    isSelected,
-                    calendarType,
-                    isLeapDay: isGregorianLeapDay,
-                    isSundayHighlight: isSundayCell,
-                  );
-                },
+                      ),
+                    ),
+                ],
               );
             },
           ),
@@ -220,6 +244,7 @@ class CalendarMonthWidget extends StatelessWidget {
           color = Colors.blue.shade700;
           break;
         case CalendarType.neutral:
+        case CalendarType.allChristian:
           color = Colors.green.shade700;
           break;
       }
@@ -281,7 +306,11 @@ class CalendarMonthWidget extends StatelessWidget {
           : Colors.green.shade300;
     } else {
       backgroundColor = null;
-      textColor = isSundayHighlight ? Colors.red : null;
+      textColor = isSundayHighlight
+          ? Colors.red
+          : calendarType == CalendarType.normal
+              ? Colors.blue.shade700
+              : Colors.green.shade700;
       borderColor = isSundayHighlight
           ? Colors.red.withValues(alpha: 0.4)
           : Colors.grey.shade300;
@@ -324,8 +353,18 @@ class CalendarMonthWidget extends StatelessWidget {
 
     return InkWell(
       onTap: isDisabled
-          ? (onTap != null ? () { playClick(); onTap!(); } : null)
-          : (onDaySelected != null ? () { playClick(); onDaySelected!(day); } : null),
+          ? (onTap != null
+              ? () {
+                  playClick();
+                  onTap();
+                }
+              : null)
+          : (onDaySelected != null
+              ? () {
+                  playClick();
+                  onDaySelected!(day);
+                }
+              : null),
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations_manual.dart';
 import '../services/calendar_converter.dart';
 import '../utils/click_sound.dart';
+import 'lock_screen.dart';
 
 class GregorianCalendarScreen extends StatefulWidget {
   const GregorianCalendarScreen({super.key});
@@ -81,6 +82,114 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
     });
   }
 
+  bool _isDarkMode(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  Color _gregorianTextColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.blue.shade300 : Colors.blue.shade700;
+
+  Color _gregorianMutedTextColor(BuildContext context) => _isDarkMode(context)
+      ? Colors.blue.shade200.withValues(alpha: 0.75)
+      : Colors.blue.shade700.withValues(alpha: 0.5);
+
+  Color _gregorianSelectedBgColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.blue.shade500 : Colors.blue.shade700;
+
+  Color _gregorianTodayBgColor(BuildContext context) => _isDarkMode(context)
+      ? Colors.blue.shade900.withValues(alpha: 0.55)
+      : Colors.blue.shade100;
+
+  Color _gregorianTodayTextColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.blue.shade100 : Colors.blue.shade900;
+
+  void _showMonthPicker(BuildContext context) {
+    playClick();
+    final localizations = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(localizations.gregorianStyle),
+        content: SizedBox(
+          width: 280,
+          height: 300,
+          child: ListView.builder(
+            itemCount: 12,
+            itemBuilder: (_, i) {
+              final month = i + 1;
+              final isSelected = month == _currentMonth;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                title: Text(
+                  _getMonthName(localizations, month),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+                onTap: () {
+                  playClick();
+                  setState(() => _currentMonth = month);
+                  Navigator.pop(ctx);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showYearPicker(BuildContext context) {
+    playClick();
+    final currentYear = DateTime.now().year;
+    final controller = ScrollController(
+      initialScrollOffset: (_currentYear - (currentYear - 50)) * 48.0,
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.gregorianStyle),
+        content: SizedBox(
+          width: 280,
+          height: 300,
+          child: ListView.builder(
+            controller: controller,
+            itemCount: 101,
+            itemBuilder: (_, i) {
+              final year = currentYear - 50 + i;
+              final isSelected = year == _currentYear;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                title: Text(
+                  '$year',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+                onTap: () {
+                  playClick();
+                  setState(() => _currentYear = year);
+                  Navigator.pop(ctx);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   String _getMonthName(AppLocalizations localizations, int month) {
     switch (month) {
       case 1:
@@ -126,6 +235,8 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
     final daysInMonth =
         CalendarConverter.getDaysInMonthNormal(_currentYear, _currentMonth);
     final firstWeekday = _firstWeekdayOffset(_currentYear, _currentMonth);
+    final isGregorianLeapFeb =
+        _currentMonth == 2 && CalendarConverter.isLeapYearNormal(_currentYear);
 
     return Scaffold(
       appBar: AppBar(
@@ -142,6 +253,23 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
             icon: const Icon(Icons.today),
             onPressed: _goToToday,
             tooltip: localizations.today,
+          ),
+          IconButton(
+            icon: const Icon(Icons.phone_android),
+            onPressed: () {
+              playClick();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  opaque: false,
+                  pageBuilder: (_, __, ___) => LockScreen(
+                    standaloneRoute: true,
+                    child: const SizedBox.shrink(),
+                  ),
+                  transitionDuration: Duration.zero,
+                ),
+              );
+            },
+            tooltip: localizations.lockScreen,
           ),
         ],
       ),
@@ -177,57 +305,76 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _circleArrow(Icons.chevron_left, _previousMonth),
+                        _circleArrow(Icons.keyboard_arrow_up, _previousMonth),
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOut,
-                              switchOutCurve: Curves.easeIn,
-                              layoutBuilder: (currentChild, previousChildren) {
-                                return Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    ...previousChildren,
-                                    if (currentChild != null) currentChild,
-                                  ],
-                                );
-                              },
-                              transitionBuilder: (child, animation) {
-                                final isIncoming = animation.status ==
-                                        AnimationStatus.forward ||
-                                    animation.status ==
-                                        AnimationStatus.completed;
-                                final offsetTween = Tween<Offset>(
-                                  begin: Offset(
-                                      isIncoming
-                                          ? (_slideForward ? 1.0 : -1.0)
-                                          : (_slideForward ? -1.0 : 1.0),
-                                      0),
-                                  end: Offset.zero,
-                                );
-                                return SlideTransition(
-                                  position: offsetTween.animate(animation),
-                                  child: FadeTransition(
-                                    opacity: animation,
-                                    child: child,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _showMonthPicker(context),
+                                  child: Text(
+                                    _getMonthName(localizations, _currentMonth),
+                                    key: ValueKey('month-$_currentMonth'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: _gregorianTextColor(context),
+                                        ),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                '${_getMonthName(localizations, _currentMonth)} $_currentYear',
-                                key: ValueKey('$_currentYear-$_currentMonth'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    '/',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          color: _gregorianTextColor(context),
+                                        ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _showYearPicker(context),
+                                  child: Text(
+                                    '$_currentYear',
+                                    key: ValueKey('year-$_currentYear'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: _gregorianTextColor(context),
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: _nextYear,
+                                      child: Icon(
+                                        Icons.keyboard_arrow_up,
+                                        size: 18,
+                                        color: _gregorianTextColor(context),
+                                      ),
                                     ),
-                              ),
+                                    GestureDetector(
+                                      onTap: _previousYear,
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 18,
+                                        color: _gregorianTextColor(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             if (_currentMonth == 2 &&
                                 CalendarConverter.isLeapYearNormal(
@@ -243,7 +390,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  'Leap Year ✦',
+                                  localizations.leapDay,
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -253,7 +400,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                               ),
                           ],
                         ),
-                        _circleArrow(Icons.chevron_right, _nextMonth),
+                        _circleArrow(Icons.keyboard_arrow_down, _nextMonth),
                       ],
                     ),
                   ),
@@ -339,12 +486,14 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                                     _selectedDate.day == day;
 
                             final isSundayCell = index % 7 == 6;
+                            final isLeapDay = isGregorianLeapFeb && day == 29;
 
                             return _buildDayCell(
                               day,
                               isToday,
                               isSelected,
                               isSundayCell: isSundayCell,
+                              isLeapDay: isLeapDay,
                             );
                           },
                         ),
@@ -381,8 +530,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color:
-                isSunday ? Colors.red : Theme.of(context).colorScheme.primary,
+            color: isSunday ? Colors.red : _gregorianTextColor(context),
             fontSize: 14,
           ),
         ),
@@ -395,32 +543,73 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
     bool isToday,
     bool isSelected, {
     bool isSundayCell = false,
+    bool isLeapDay = false,
   }) {
     Color backgroundColor;
     Color textColor;
     BoxDecoration decoration;
 
     if (isToday) {
-      backgroundColor = Theme.of(context).colorScheme.primary;
-      textColor = Theme.of(context).colorScheme.onPrimary;
+      backgroundColor = _gregorianTodayBgColor(context);
+      textColor = _gregorianTodayTextColor(context);
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
       );
     } else if (isSelected) {
-      backgroundColor = Theme.of(context).colorScheme.primaryContainer;
-      textColor = Theme.of(context).colorScheme.onPrimaryContainer;
+      backgroundColor = _gregorianSelectedBgColor(context);
+      textColor = Colors.white;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
       );
-    } else {
-      backgroundColor = Colors.transparent;
-      textColor =
-          isSundayCell ? Colors.red : Theme.of(context).colorScheme.onSurface;
+    } else if (isLeapDay) {
+      backgroundColor = Colors.amber.shade100;
+      textColor = Colors.orange.shade900;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
+        border: Border.all(color: Colors.amber.shade600, width: 1.5),
+      );
+    } else {
+      backgroundColor = Colors.transparent;
+      textColor = isSundayCell ? Colors.red : _gregorianTextColor(context);
+      decoration = BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+      );
+    }
+
+    Widget content = Center(
+      child: Text(
+        day.toString(),
+        style: TextStyle(
+          color: textColor,
+          fontWeight:
+              isToday || isLeapDay ? FontWeight.bold : FontWeight.normal,
+          fontSize: 16,
+        ),
+      ),
+    );
+
+    if (isLeapDay) {
+      content = Stack(
+        children: [
+          content,
+          Positioned(
+            bottom: 3,
+            left: 0,
+            right: 0,
+            child: Text(
+              '✦',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 7,
+                color: Colors.amber.shade700,
+              ),
+            ),
+          ),
+        ],
       );
     }
 
@@ -435,16 +624,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
       child: Container(
         margin: const EdgeInsets.all(4),
         decoration: decoration,
-        child: Center(
-          child: Text(
-            day.toString(),
-            style: TextStyle(
-              color: textColor,
-              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        child: content,
       ),
     );
   }
@@ -474,10 +654,9 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                 children: [
                   Text(
                     '$_currentYear',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: _gregorianTextColor(context),
                         ),
                   ),
                   if (CalendarConverter.isLeapYearNormal(_currentYear)) ...[
@@ -492,7 +671,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        'Leap ✦',
+                        localizations.leapDayShort,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -564,9 +743,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isCurrentMonth
-                          ? Theme.of(context).colorScheme.primary
-                          : null,
+                      color: _gregorianTextColor(context),
                     ),
               ),
               const SizedBox(height: 2),
@@ -591,10 +768,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                           fontWeight: FontWeight.bold,
                           color: entry.$2
                               ? Colors.red
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.5),
+                              : _gregorianMutedTextColor(context),
                         ),
                       ),
                     ),
@@ -625,7 +799,7 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                       margin: const EdgeInsets.all(1),
                       decoration: BoxDecoration(
                         color: isToday
-                            ? Theme.of(context).colorScheme.primary
+                            ? _gregorianSelectedBgColor(context)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -635,13 +809,11 @@ class _GregorianCalendarScreenState extends State<GregorianCalendarScreen> {
                           style: TextStyle(
                             fontSize: 8,
                             color: isToday
-                                ? Theme.of(context).colorScheme.onPrimary
+                                ? Colors.white
                                 : (isSun
                                     ? Colors.red.withValues(alpha: 0.8)
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.7)),
+                                    : _gregorianTextColor(context)
+                                        .withValues(alpha: 0.75)),
                             fontWeight:
                                 isToday ? FontWeight.bold : FontWeight.normal,
                           ),

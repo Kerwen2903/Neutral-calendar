@@ -6,6 +6,7 @@ import '../models/calendar_type.dart';
 import '../models/calendar_date.dart';
 import '../services/calendar_converter.dart';
 import '../main.dart';
+import 'lock_screen.dart';
 
 class ComparisonScreen extends StatefulWidget {
   const ComparisonScreen({super.key});
@@ -67,6 +68,17 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     });
   }
 
+  bool get _useAllChristian =>
+      NeutralCalendarApp.of(context)?.useAllChristianCombo ?? false;
+
+  CalendarDate _toNeutral(CalendarDate normalDate) => _useAllChristian
+      ? CalendarConverter.normalToAllChristian(normalDate)
+      : CalendarConverter.normalToNeutral(normalDate);
+
+  CalendarDate _toNormal(CalendarDate neutralDate) => _useAllChristian
+      ? CalendarConverter.allChristianToNormal(neutralDate)
+      : CalendarConverter.neutralToNormal(neutralDate);
+
   void _onNormalDaySelected(int day) {
     setState(() {
       _selectedNormalDate = CalendarDate(
@@ -75,9 +87,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.normal,
       );
-      _selectedNeutralDate = CalendarConverter.normalToNeutral(
-        _selectedNormalDate!,
-      );
+      _selectedNeutralDate = _toNeutral(_selectedNormalDate!);
       // Navigate neutral calendar to the month of the converted date
       _neutralYear = _selectedNeutralDate!.year;
       _neutralMonth = _selectedNeutralDate!.month;
@@ -92,9 +102,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.neutral,
       );
-      _selectedNormalDate = CalendarConverter.neutralToNormal(
-        _selectedNeutralDate!,
-      );
+      _selectedNormalDate = _toNormal(_selectedNeutralDate!);
       // Navigate normal calendar to the month of the converted date
       _normalYear = _selectedNormalDate!.year;
       _normalMonth = _selectedNormalDate!.month;
@@ -111,9 +119,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.normal,
       );
-      _selectedNeutralDate = CalendarConverter.normalToNeutral(
-        _selectedNormalDate!,
-      );
+      _selectedNeutralDate = _toNeutral(_selectedNormalDate!);
       _neutralYear = _selectedNeutralDate!.year;
       _neutralMonth = _selectedNeutralDate!.month;
     });
@@ -129,9 +135,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.normal,
       );
-      _selectedNeutralDate = CalendarConverter.normalToNeutral(
-        _selectedNormalDate!,
-      );
+      _selectedNeutralDate = _toNeutral(_selectedNormalDate!);
       _neutralYear = _selectedNeutralDate!.year;
       _neutralMonth = _selectedNeutralDate!.month;
     });
@@ -147,9 +151,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.neutral,
       );
-      _selectedNormalDate = CalendarConverter.neutralToNormal(
-        _selectedNeutralDate!,
-      );
+      _selectedNormalDate = _toNormal(_selectedNeutralDate!);
       _normalYear = _selectedNormalDate!.year;
       _normalMonth = _selectedNormalDate!.month;
     });
@@ -165,12 +167,82 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         day: day,
         calendarType: CalendarType.neutral,
       );
-      _selectedNormalDate = CalendarConverter.neutralToNormal(
-        _selectedNeutralDate!,
-      );
+      _selectedNormalDate = _toNormal(_selectedNeutralDate!);
       _normalYear = _selectedNormalDate!.year;
       _normalMonth = _selectedNormalDate!.month;
     });
+  }
+
+  void _previousYear() {
+    playClick();
+    setState(() {
+      _normalYear--;
+      _neutralYear--;
+      _selectedNormalDate = null;
+      _selectedNeutralDate = null;
+    });
+  }
+
+  void _nextYear() {
+    playClick();
+    setState(() {
+      _normalYear++;
+      _neutralYear++;
+      _selectedNormalDate = null;
+      _selectedNeutralDate = null;
+    });
+  }
+
+  void _showYearPicker(BuildContext context) {
+    playClick();
+    final currentYear = DateTime.now().year;
+    final controller = ScrollController(
+      initialScrollOffset: (_normalYear - (currentYear - 50)) * 48.0,
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.comparison),
+        content: SizedBox(
+          width: 280,
+          height: 300,
+          child: ListView.builder(
+            controller: controller,
+            itemCount: 101,
+            itemBuilder: (_, i) {
+              final year = currentYear - 50 + i;
+              final isSelected = year == _normalYear;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                title: Text(
+                  '$year',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+                onTap: () {
+                  playClick();
+                  final diff = year - _normalYear;
+                  setState(() {
+                    _normalYear = year;
+                    _neutralYear += diff;
+                    _selectedNormalDate = null;
+                    _selectedNeutralDate = null;
+                  });
+                  Navigator.pop(ctx);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -180,6 +252,28 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     final useNeutral = appState?.useNeutralMonthNames ?? true;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(localizations.comparison),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.phone_android),
+            onPressed: () {
+              playClick();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  opaque: false,
+                  pageBuilder: (_, __, ___) => LockScreen(
+                    standaloneRoute: true,
+                    child: const SizedBox.shrink(),
+                  ),
+                  transitionDuration: Duration.zero,
+                ),
+              );
+            },
+            tooltip: localizations.lockScreen,
+          ),
+        ],
+      ),
       body: SafeArea(
         child: GestureDetector(
         onHorizontalDragEnd: (details) {
@@ -201,24 +295,74 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 _circleArrow(Icons.chevron_left, _previousMonth),
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 400),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    layoutBuilder: (currentChild, previousChildren) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ...previousChildren,
+                          if (currentChild != null) currentChild,
+                        ],
+                      );
+                    },
                     transitionBuilder: (child, animation) {
+                      final isIncoming = animation.status == AnimationStatus.forward ||
+                          animation.status == AnimationStatus.completed;
                       final offsetTween = Tween<Offset>(
-                        begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                        begin: Offset(
+                            isIncoming
+                                ? (_slideForward ? 1.0 : -1.0)
+                                : (_slideForward ? -1.0 : 1.0),
+                            0),
                         end: Offset.zero,
                       );
                       return SlideTransition(
-                        position: offsetTween.animate(
-                          CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                        position: offsetTween.animate(animation),
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
                         ),
-                        child: child,
                       );
                     },
-                    child: Text(
-                      '${_getMonthName(localizations, _normalMonth, false)} $_normalYear / ${_getMonthName(localizations, _neutralMonth, useNeutral)} $_neutralYear',
-                      key: ValueKey('$_normalYear-$_normalMonth-$_neutralYear-$_neutralMonth'),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                    child: Row(
+                      key: ValueKey('$_normalYear'),
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _showYearPicker(context),
+                          child: Text(
+                            '$_normalYear',
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: _nextYear,
+                              child: Icon(
+                                Icons.keyboard_arrow_up,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: _previousYear,
+                              child: Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -229,16 +373,31 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           ),
           Expanded(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 400),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  children: [
+                    ...previousChildren,
+                    if (currentChild != null) currentChild,
+                  ],
+                );
+              },
               transitionBuilder: (child, animation) {
+                final isIncoming =
+                    animation.status == AnimationStatus.forward ||
+                        animation.status == AnimationStatus.completed;
                 final offsetTween = Tween<Offset>(
-                  begin: Offset(_slideForward ? 1.0 : -1.0, 0),
+                  begin: Offset(
+                      isIncoming
+                          ? (_slideForward ? 1.0 : -1.0)
+                          : (_slideForward ? -1.0 : 1.0),
+                      0),
                   end: Offset.zero,
                 );
                 return SlideTransition(
-                  position: offsetTween.animate(
-                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                  ),
+                  position: offsetTween.animate(animation),
                   child: FadeTransition(
                     opacity: animation,
                     child: child,
@@ -263,6 +422,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   }
 
   Widget _buildCalendarPair(AppLocalizations localizations, bool useNeutral) {
+    final appState = NeutralCalendarApp.of(context);
+    final useAllChristian = appState?.useAllChristianCombo ?? false;
+    final neutralDisplayType =
+        useAllChristian ? CalendarType.allChristian : CalendarType.neutral;
+
     return Column(
       children: [
         // Normal Calendar
@@ -270,44 +434,94 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CalendarMonthWidget(
-                year: _normalYear,
-                month: _normalMonth,
-                calendarType: CalendarType.normal,
-                selectedDay:
-                    _selectedNormalDate?.year == _normalYear &&
-                        _selectedNormalDate?.month == _normalMonth
-                    ? _selectedNormalDate?.day
-                    : null,
-                onDaySelected: _onNormalDaySelected,
-                onPreviousMonthDaySelected:
-                    _onNormalPreviousMonthDaySelected,
-                onNextMonthDaySelected:
-                    _onNormalNextMonthDaySelected,
+              child: Column(
+                children: [
+                  Text(
+                    _getMonthName(localizations, _normalMonth, false),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.blue.shade300
+                          : Colors.blue.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: CalendarMonthWidget(
+                      year: _normalYear,
+                      month: _normalMonth,
+                      calendarType: CalendarType.normal,
+                      fixedVisualRows: 7,
+                      selectedDay:
+                          _selectedNormalDate?.year == _normalYear &&
+                              _selectedNormalDate?.month == _normalMonth
+                          ? _selectedNormalDate?.day
+                          : null,
+                      onDaySelected: _onNormalDaySelected,
+                      onPreviousMonthDaySelected:
+                          _onNormalPreviousMonthDaySelected,
+                      onNextMonthDaySelected:
+                          _onNormalNextMonthDaySelected,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
         const SizedBox(height: 4),
-        // Neutral Calendar
+        // Neutral / All Christian Calendar
         Expanded(
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CalendarMonthWidget(
-                year: _neutralYear,
-                month: _neutralMonth,
-                calendarType: CalendarType.neutral,
-                selectedDay:
-                    _selectedNeutralDate?.year == _neutralYear &&
-                        _selectedNeutralDate?.month == _neutralMonth
-                    ? _selectedNeutralDate?.day
-                    : null,
-                onDaySelected: _onNeutralDaySelected,
-                onPreviousMonthDaySelected:
-                    _onNeutralPreviousMonthDaySelected,
-                onNextMonthDaySelected:
-                    _onNeutralNextMonthDaySelected,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _getMonthName(localizations, _neutralMonth, useNeutral),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.green.shade300
+                              : Colors.green.shade700,
+                        ),
+                      ),
+                      if (useAllChristian) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          '(${localizations.allChristian})',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.green.shade300
+                                : Colors.green.shade700,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: CalendarMonthWidget(
+                      year: _neutralYear,
+                      month: _neutralMonth,
+                      calendarType: neutralDisplayType,
+                      fixedVisualRows: 7,
+                      selectedDay:
+                          _selectedNeutralDate?.year == _neutralYear &&
+                              _selectedNeutralDate?.month == _neutralMonth
+                          ? _selectedNeutralDate?.day
+                          : null,
+                      onDaySelected: _onNeutralDaySelected,
+                      onPreviousMonthDaySelected:
+                          _onNeutralPreviousMonthDaySelected,
+                      onNextMonthDaySelected:
+                          _onNeutralNextMonthDaySelected,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter devices:*)",
+      "Bash(flutter run:*)",
+      "Read(//c/Windows/System32/drivers/etc/**)",
+      "Bash(curl -sI --connect-timeout 5 https://repo.maven.apache.org/maven2/)",
+      "Bash(nslookup repo.maven.apache.org)",
+      "Bash(nslookup repo.maven.apache.org 8.8.8.8)",
+      "Bash(echo \"HTTP_PROXY=$HTTP_PROXY\")",
+      "Bash(echo \"HTTPS_PROXY=$HTTPS_PROXY\")",
+      "Bash(echo \"http_proxy=$http_proxy\")",
+      "Bash(echo \"https_proxy=$https_proxy\")",
+      "Bash(reg query:*)",
+      "Bash(flutter build:*)",
+      "Bash(find /c/Users/User/Desktop/ccalendar/e-library/android/app/src/main/kotlin -type f -name *.kt)",
+      "Read(//c/Users/User/develop/packages/flutter_tools/gradle/**)",
+      "Read(//c/Users/User/develop/packages/flutter/templates/app/**)",
+      "Read(//c/Users/User/develop/**)",
+      "Bash(xargs grep:*)",
+      "Bash(grep \"const.*minSdkVersion\\\\|const.*targetSdkVersion\\\\|const.*compileSdkVersion\" /c/Users/User/develop/packages/flutter/lib/src/android/*.dart)",
+      "Bash(grep -r \"int.*compileSdk\\\\|int.*minSdk\\\\|int.*targetSdk\" /c/Users/User/develop/packages/flutter --include=*.dart)",
+      "Bash(find /c/Users/User/Desktop/ccalendar/e-library/android -name *.properties -o -name *.txt)",
+      "Bash(flutter analyze:*)",
+      "Bash(adb devices:*)",
+      "Bash(adb forward:*)",
+      "Bash(adb shell:*)",
+      "Bash(adb logcat:*)",
+      "Bash(curl -s http://127.0.0.1:8888/e3CSP0Bt_PM=/)",
+      "Bash(curl:*)",
+      "Bash(flutter:*)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr \"8888\")",
+      "Bash(findstr \"LISTENING\")",
+      "Bash(findstr \"127.0.0.1\")",
+      "Bash(adb version:*)",
+      "Bash(adb kill-server:*)",
+      "Bash(adb start-server:*)",
+      "Bash(echo:*)"
+    ]
+  }
+}

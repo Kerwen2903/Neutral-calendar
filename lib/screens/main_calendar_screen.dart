@@ -105,6 +105,116 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     });
   }
 
+  bool _isDarkMode(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  Color _neutralTextColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.green.shade300 : Colors.green.shade700;
+
+  Color _neutralMutedTextColor(BuildContext context) => _isDarkMode(context)
+      ? Colors.green.shade200.withValues(alpha: 0.75)
+      : Colors.green.shade700.withValues(alpha: 0.5);
+
+  Color _neutralSelectedBgColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.green.shade500 : Colors.green.shade700;
+
+  Color _neutralTodayBgColor(BuildContext context) => _isDarkMode(context)
+      ? Colors.green.shade900.withValues(alpha: 0.55)
+      : Colors.green.shade100;
+
+  Color _neutralTodayTextColor(BuildContext context) =>
+      _isDarkMode(context) ? Colors.green.shade100 : Colors.green.shade900;
+
+  void _showMonthPicker(BuildContext context) {
+    playClick();
+    final localizations = AppLocalizations.of(context)!;
+    final appState = NeutralCalendarApp.of(context);
+    final useNeutral = appState?.useNeutralMonthNames ?? true;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(localizations.calendar),
+        content: SizedBox(
+          width: 280,
+          height: 300,
+          child: ListView.builder(
+            itemCount: 12,
+            itemBuilder: (_, i) {
+              final month = i + 1;
+              final isSelected = month == _currentMonth;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                title: Text(
+                  _getMonthName(localizations, month, useNeutral),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+                onTap: () {
+                  playClick();
+                  setState(() => _currentMonth = month);
+                  Navigator.pop(ctx);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showYearPicker(BuildContext context) {
+    playClick();
+    final currentYear = DateTime.now().year;
+    final controller = ScrollController(
+      initialScrollOffset: (_currentYear - (currentYear - 50)) * 48.0,
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.calendar),
+        content: SizedBox(
+          width: 280,
+          height: 300,
+          child: ListView.builder(
+            controller: controller,
+            itemCount: 101, // 50 years before/after current year
+            itemBuilder: (_, i) {
+              final year = currentYear - 50 + i;
+              final isSelected = year == _currentYear;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                title: Text(
+                  '$year',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 18,
+                  ),
+                ),
+                onTap: () {
+                  playClick();
+                  setState(() => _currentYear = year);
+                  Navigator.pop(ctx);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   String _getMonthName(
     AppLocalizations localizations,
     int month,
@@ -272,57 +382,76 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _circleArrow(Icons.chevron_left, _previousMonth),
+                        _circleArrow(Icons.keyboard_arrow_up, _previousMonth),
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOut,
-                              switchOutCurve: Curves.easeIn,
-                              layoutBuilder: (currentChild, previousChildren) {
-                                return Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    ...previousChildren,
-                                    if (currentChild != null) currentChild,
-                                  ],
-                                );
-                              },
-                              transitionBuilder: (child, animation) {
-                                final isIncoming = animation.status ==
-                                        AnimationStatus.forward ||
-                                    animation.status ==
-                                        AnimationStatus.completed;
-                                final offsetTween = Tween<Offset>(
-                                  begin: Offset(
-                                      isIncoming
-                                          ? (_slideForward ? 1.0 : -1.0)
-                                          : (_slideForward ? -1.0 : 1.0),
-                                      0),
-                                  end: Offset.zero,
-                                );
-                                return SlideTransition(
-                                  position: offsetTween.animate(animation),
-                                  child: FadeTransition(
-                                    opacity: animation,
-                                    child: child,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _showMonthPicker(context),
+                                  child: Text(
+                                    _getMonthName(localizations, _currentMonth, useNeutral),
+                                    key: ValueKey('month-$_currentMonth'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: _neutralTextColor(context),
+                                        ),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                '${_getMonthName(localizations, _currentMonth, useNeutral)} $_currentYear',
-                                key: ValueKey('$_currentYear-$_currentMonth'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimaryContainer,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    '/',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          color: _neutralTextColor(context),
+                                        ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _showYearPicker(context),
+                                  child: Text(
+                                    '$_currentYear',
+                                    key: ValueKey('year-$_currentYear'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: _neutralTextColor(context),
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: _nextYear,
+                                      child: Icon(
+                                        Icons.keyboard_arrow_up,
+                                        size: 18,
+                                        color: _neutralTextColor(context),
+                                      ),
                                     ),
-                              ),
+                                    GestureDetector(
+                                      onTap: _previousYear,
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 18,
+                                        color: _neutralTextColor(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             if (_currentMonth == 2 &&
                                 CalendarConverter.isLeapYearNormal(
@@ -338,7 +467,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  'Leap Year ✦',
+                                  localizations.leapDay,
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -348,7 +477,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                               ),
                           ],
                         ),
-                        _circleArrow(Icons.chevron_right, _nextMonth),
+                        _circleArrow(Icons.keyboard_arrow_down, _nextMonth),
                       ],
                     ),
                   ),
@@ -456,9 +585,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                                 if (isNeutralLeapFeb)
                                   Positioned(
                                     top: gridRows * (cellSize + 4),
-                                    left: 3.4 * (cellSize + 4),
+                                    left: 3 * (cellSize + 4),
                                     width: cellSize,
-                                    height: cellSize * 0.9,
+                                    height: cellSize,
                                     child: _buildLeapDay31Cell(),
                                   ),
                               ],
@@ -498,8 +627,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color:
-                isSunday ? Colors.red : Theme.of(context).colorScheme.primary,
+            color: isSunday ? Colors.red : _neutralTextColor(context),
             fontSize: 14,
           ),
         ),
@@ -556,23 +684,22 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
     BoxDecoration decoration;
 
     if (isToday) {
-      backgroundColor = Theme.of(context).colorScheme.primary;
-      textColor = Theme.of(context).colorScheme.onPrimary;
+      backgroundColor = _neutralTodayBgColor(context);
+      textColor = _neutralTodayTextColor(context);
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
       );
     } else if (isSelected) {
-      backgroundColor = Theme.of(context).colorScheme.primaryContainer;
-      textColor = Theme.of(context).colorScheme.onPrimaryContainer;
+      backgroundColor = _neutralSelectedBgColor(context);
+      textColor = Colors.white;
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
       );
     } else {
       backgroundColor = Colors.transparent;
-      textColor =
-          isSundayCell ? Colors.red : Theme.of(context).colorScheme.onSurface;
+      textColor = isSundayCell ? Colors.red : _neutralTextColor(context);
       decoration = BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -630,10 +757,9 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 children: [
                   Text(
                     '$_currentYear',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: _neutralTextColor(context),
                         ),
                   ),
                   if (CalendarConverter.isLeapYearNormal(_currentYear)) ...[
@@ -648,7 +774,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        'Leap ✦',
+                        localizations.leapDayShort,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -737,8 +863,8 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isCurrentMonth
-                          ? Theme.of(context).colorScheme.primary
-                          : null,
+                          ? _neutralTextColor(context)
+                          : _neutralTextColor(context),
                     ),
               ),
               const SizedBox(height: 2),
@@ -763,10 +889,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                           fontWeight: FontWeight.bold,
                           color: entry.$2
                               ? Colors.red
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.5),
+                              : _neutralMutedTextColor(context),
                         ),
                       ),
                     ),
@@ -822,7 +945,7 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                       margin: const EdgeInsets.all(1),
                       decoration: BoxDecoration(
                         color: isToday
-                            ? Theme.of(context).colorScheme.primary
+                            ? _neutralSelectedBgColor(context)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -832,13 +955,11 @@ class _MainCalendarScreenState extends State<MainCalendarScreen> {
                           style: TextStyle(
                             fontSize: 8,
                             color: isToday
-                                ? Theme.of(context).colorScheme.onPrimary
+                                ? Colors.white
                                 : (isSun
                                     ? Colors.red.withValues(alpha: 0.8)
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.7)),
+                                    : _neutralTextColor(context)
+                                        .withValues(alpha: 0.75)),
                             fontWeight:
                                 isToday ? FontWeight.bold : FontWeight.normal,
                           ),

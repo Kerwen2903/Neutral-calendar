@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: List.generate(navItems.length, (i) {
                 final selected = _selectedIndex == i;
                 final color = selected
-                    ? colorScheme.primary
+                    ? colorScheme.onSurface
                     : colorScheme.onSurface.withValues(alpha: 0.55);
                 return Expanded(
                   child: InkWell(

@@ -102,7 +102,7 @@ class AppLocalizationsTk extends AppLocalizations {
   String get shinto => 'Şinto';
 
   @override
-  String get aqdas => 'Agdas';
+  String get aqdas => 'Aqdas';
 
   @override
   String get nirvana => 'Nirwana';
