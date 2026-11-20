@@ -1,0 +1,719 @@
+1
+00:00:03,200 --> 00:00:05,780
+Almost every world religion founded its own summer
+
+2
+00:00:05,780 --> 00:00:07,620
+census, taking into account the events that were
+
+3
+00:00:07,620 --> 00:00:08,600
+significant for it.
+
+4
+00:00:08,600 --> 00:00:17,380
+For example, according to the Jewish calendar, it
+
+5
+00:00:17,380 --> 00:00:21,080
+is now 5773 years since the creation of
+
+6
+00:00:21,080 --> 00:00:21,340
+the world.
+
+7
+00:00:21,620 --> 00:00:25,440
+The Islamic world has been living in 1434
+
+8
+00:00:25,440 --> 00:00:27,620
+since the time of the resettlement of the
+
+9
+00:00:27,620 --> 00:00:29,940
+prophet Muhammad from Mecca to Medina.
+
+10
+00:00:29,940 --> 00:00:33,200
+Buddhists consider the beginning of their calendar to
+
+11
+00:00:33,200 --> 00:00:35,140
+be the birthday of Buddha or the date
+
+12
+00:00:35,140 --> 00:00:36,720
+of his departure to Nirvana.
+
+13
+00:00:38,460 --> 00:00:40,880
+There are many calendars in the world, but
+
+14
+00:00:40,880 --> 00:00:42,640
+all of them can be divided into three
+
+15
+00:00:42,640 --> 00:00:42,940
+types.
+
+16
+00:00:43,340 --> 00:00:46,520
+Solar, lunar and lunar-solar.
+
+17
+00:00:48,380 --> 00:00:51,600
+The solar calendars are familiar to us as
+
+18
+00:00:51,600 --> 00:00:53,760
+the Julian calendar, which we call the old
+
+19
+00:00:53,760 --> 00:00:56,400
+style, and the Gregorian calendar, according to which
+
+20
+00:00:56,400 --> 00:00:58,080
+most of the planet lives.
+
+21
+00:00:58,080 --> 00:00:59,940
+The Gregorian calendar is based on the tropical
+
+22
+00:00:59,940 --> 00:01:02,520
+year, the time during which the Earth makes
+
+23
+00:01:02,520 --> 00:01:04,220
+a full circle around the Sun.
+
+24
+00:01:04,580 --> 00:01:08,420
+This is 365 days, 5 hours and 48
+
+25
+00:01:08,420 --> 00:01:09,060
+minutes.
+
+26
+00:01:10,100 --> 00:01:12,200
+The solar day is the time of the
+
+27
+00:01:12,200 --> 00:01:16,260
+Earth's rotation around its axis, about 24 hours.
+
+28
+00:01:17,880 --> 00:01:20,060
+The lunar calendar is not tied to the
+
+29
+00:01:20,060 --> 00:01:20,880
+movement of the Sun.
+
+30
+00:01:20,880 --> 00:01:22,640
+The lunar calendar is based on the lunar
+
+31
+00:01:22,640 --> 00:01:25,040
+month, the time during which the moon has
+
+32
+00:01:25,040 --> 00:01:28,040
+time to pass from one new moon to
+
+33
+00:01:28,040 --> 00:01:28,500
+another.
+
+34
+00:01:29,240 --> 00:01:31,480
+In the new moon, the moon is between
+
+35
+00:01:31,480 --> 00:01:34,060
+the Earth and the Sun, so on this
+
+36
+00:01:34,060 --> 00:01:36,040
+day it is not visible from the Earth.
+
+37
+00:01:36,780 --> 00:01:39,860
+The lunar-solar calendars are based on the
+
+38
+00:01:39,860 --> 00:01:42,880
+periodic movement of the Moon and the Sun.
+
+39
+00:01:48,100 --> 00:01:51,100
+The lunar calendar, which is adhered to by
+
+40
+00:01:51,100 --> 00:01:54,820
+Buddhists and Muslims, is the official state calendar
+
+41
+00:01:54,820 --> 00:01:57,720
+of many countries in Southeast Asia and some
+
+42
+00:01:57,720 --> 00:02:00,120
+Islamic countries, and one of the oldest.
+
+43
+00:02:08,830 --> 00:02:12,610
+The solar calendar, according to which most of
+
+44
+00:02:12,610 --> 00:02:15,330
+the world lives today, also needs to be
+
+45
+00:02:15,330 --> 00:02:15,670
+corrected from time to time.
+
+46
+00:02:18,270 --> 00:02:21,230
+For example, the Julian calendar, introduced by Caesar
+
+47
+00:02:21,230 --> 00:02:24,670
+in 45 BC, and adopted as a common
+
+48
+00:02:24,670 --> 00:02:29,190
+Christian in Byzantium in 325, also assumed the
+
+49
+00:02:29,190 --> 00:02:31,470
+presence of a high-altitude year after the
+
+50
+00:02:31,470 --> 00:02:32,390
+three usual ones.
+
+51
+00:02:33,030 --> 00:02:35,310
+Already then it was known that the Earth
+
+52
+00:02:35,310 --> 00:02:39,410
+turns around the Sun not exactly 365 days,
+
+53
+00:02:39,710 --> 00:02:42,850
+but 365 days and 6 hours.
+
+54
+00:02:42,850 --> 00:02:47,250
+Thus, for four years accumulated additional ...
+
+55
+00:02:48,590 --> 00:02:52,630
+For centuries, humanity has not correctly determined not
+
+56
+00:02:52,630 --> 00:02:54,130
+only the length of the day, but also
+
+57
+00:02:54,130 --> 00:02:55,890
+the duration of the solar year.
+
+58
+00:02:56,310 --> 00:02:57,850
+For a long time it was believed that
+
+59
+00:02:57,850 --> 00:03:00,650
+the year lasts 365 days and 6 hours,
+
+60
+00:03:01,010 --> 00:03:03,630
+which were compensated by the addition once every
+
+61
+00:03:03,630 --> 00:03:05,590
+four years of an additional day.
+
+62
+00:03:05,590 --> 00:03:08,710
+But in fact, the duration of the year
+
+63
+00:03:08,710 --> 00:03:13,950
+is 365 days, 5 hours and 48 minutes.
+
+64
+00:03:14,210 --> 00:03:17,070
+These 12 minutes of difference, not taken into
+
+65
+00:03:17,070 --> 00:03:21,530
+account by the Julian calendar, by 1582 was
+
+66
+00:03:21,530 --> 00:03:23,010
+already 10 days.
+
+67
+00:03:23,530 --> 00:03:26,730
+So the date of real equilibrium, which was
+
+68
+00:03:26,730 --> 00:03:28,730
+considered a kind of control point at that
+
+69
+00:03:28,730 --> 00:03:30,850
+time, diverged from the calendar.
+
+70
+00:03:32,210 --> 00:03:35,890
+Pope Gregory XIII eliminated this mistake, having carried
+
+71
+00:03:35,890 --> 00:03:38,290
+out a calendar reform, and returned the date
+
+72
+00:03:38,290 --> 00:03:41,630
+of real spring equilibrium to March 21.
+
+73
+00:03:42,650 --> 00:03:46,690
+But every 128 years between the calendars the
+
+74
+00:03:46,690 --> 00:03:48,330
+difference accumulates in one more day.
+
+75
+00:03:48,550 --> 00:03:51,430
+So now it is already 13 days.
+
+76
+00:03:52,110 --> 00:03:54,810
+The reason is in the unequal number of
+
+77
+00:03:54,810 --> 00:03:55,730
+high-altitude years.
+
+78
+00:03:55,730 --> 00:03:58,850
+In the Julian calendar, every end of the
+
+79
+00:03:58,850 --> 00:04:01,070
+century is a high-altitude year.
+
+80
+00:04:01,410 --> 00:04:03,470
+And in the Gregorian calendar, only those years
+
+81
+00:04:03,470 --> 00:04:05,370
+that are divided by 400.
+
+82
+00:04:05,770 --> 00:04:09,210
+For example, 2000 was high-altitude for both
+
+83
+00:04:09,210 --> 00:04:09,850
+calendars.
+
+84
+00:04:10,230 --> 00:04:13,110
+But 2100, according to the Julian calendar, will
+
+85
+00:04:13,110 --> 00:04:13,750
+be high-altitude.
+
+86
+00:04:14,150 --> 00:04:16,930
+And according to the common Gregorian calendar, no.
+
+87
+00:04:17,390 --> 00:04:20,110
+Thus, between the calendars, the difference will accumulate
+
+88
+00:04:20,110 --> 00:04:21,490
+in one more day.
+
+89
+00:04:22,230 --> 00:04:25,530
+In fact, Pope Gregory XIII not only corrected
+
+90
+00:04:25,530 --> 00:04:26,390
+the mistake of the calendar.
+
+91
+00:04:26,870 --> 00:04:29,490
+He created a contradiction between the Catholic and
+
+92
+00:04:29,490 --> 00:04:30,010
+the Orthodox.
+
+93
+00:04:30,570 --> 00:04:33,250
+But the difference in the dates of Christmas
+
+94
+00:04:33,250 --> 00:04:36,250
+celebration among Catholics and Orthodox does not really
+
+95
+00:04:36,250 --> 00:04:37,170
+exist.
+
+96
+00:04:37,610 --> 00:04:41,490
+In the Orthodox church calendar, Christmas also takes
+
+97
+00:04:41,490 --> 00:04:42,490
+place on December 25.
+
+98
+00:04:43,430 --> 00:04:46,450
+But according to the new Gregorian style, this
+
+99
+00:04:46,450 --> 00:04:47,130
+is January 7.
+
+100
+00:04:48,050 --> 00:04:50,230
+Recently, in the church circles, there was an
+
+101
+00:04:50,230 --> 00:04:52,530
+offer to get rid of the calendar confusion.
+
+102
+00:04:53,130 --> 00:04:55,430
+And to combine the celebration of Christmas among
+
+103
+00:04:55,430 --> 00:04:58,170
+Catholics and Orthodox with the New Year.
+
+104
+00:04:58,750 --> 00:04:59,950
+It turns out that if the new style,
+
+105
+00:05:00,330 --> 00:05:02,490
+then we celebrate Christmas, and the year we
+
+106
+00:05:02,490 --> 00:05:04,110
+start counting a week later.
+
+107
+00:05:04,930 --> 00:05:06,530
+If according to the old style, it turns
+
+108
+00:05:06,530 --> 00:05:07,890
+out that we started the New Year, Christmas
+
+109
+00:05:07,890 --> 00:05:09,570
+of Christ, but we celebrate Christmas in a
+
+110
+00:05:09,570 --> 00:05:09,790
+week.
+
+111
+00:05:09,790 --> 00:05:12,790
+I think that this agreement could be avoided,
+
+112
+00:05:12,970 --> 00:05:16,370
+if the date of Christmas is combined with
+
+113
+00:05:16,370 --> 00:05:16,710
+the New Year.
+
+114
+00:05:16,890 --> 00:05:18,690
+For example, Christmas on December 31, and the
+
+115
+00:05:18,690 --> 00:05:19,790
+New Year on January 1.
+
+116
+00:05:20,450 --> 00:05:23,130
+There are no canons that prohibit the Orthodox
+
+117
+00:05:23,130 --> 00:05:25,150
+to postpone the celebration of Christmas.
+
+118
+00:05:26,550 --> 00:05:28,830
+And these ideas have already found support among
+
+119
+00:05:28,830 --> 00:05:30,090
+the Russian Protestants.
+
+120
+00:05:30,270 --> 00:05:32,890
+Which, by the way, adopted the Gregorian calendar
+
+121
+00:05:32,890 --> 00:05:34,190
+as one of the last.
+
+122
+00:05:34,410 --> 00:05:36,470
+At the beginning of the 18th century.
+
+123
+00:05:37,470 --> 00:05:39,170
+Thoughts are quite reasonable.
+
+124
+00:05:40,290 --> 00:05:44,190
+The date of Christmas is conditional.
+
+125
+00:05:44,350 --> 00:05:47,250
+Of course, no one knows for sure when
+
+126
+00:05:47,250 --> 00:05:48,730
+Jesus Christ was born.
+
+127
+00:05:56,140 --> 00:06:00,330
+Will the church majority support this offer or
+
+128
+00:06:00,330 --> 00:06:00,430
+not?
+
+129
+00:06:00,430 --> 00:06:02,030
+The date of the celebration of the Orthodox
+
+130
+00:06:02,030 --> 00:06:06,510
+Christmas will still change in 2101.
+
+131
+00:06:07,250 --> 00:06:09,430
+Due to the increasing difference between the Julian
+
+132
+00:06:09,430 --> 00:06:11,390
+and Gregorian calendars.
+
+133
+00:06:11,790 --> 00:06:16,750
+The Orthodox Church, starting from 2101, will celebrate
+
+134
+00:06:16,750 --> 00:06:19,170
+Christmas not on the 7th, but on the
+
+135
+00:06:19,170 --> 00:06:20,830
+8th of January, in translation.
+
+136
+00:06:22,030 --> 00:06:24,350
+For a long time, scientists are trying to
+
+137
+00:06:24,350 --> 00:06:27,390
+create the same universal calendar for the life
+
+138
+00:06:27,390 --> 00:06:28,010
+of man.
+
+139
+00:06:28,010 --> 00:06:31,270
+The World Association of Calendars even turned to
+
+140
+00:06:31,270 --> 00:06:31,570
+the UN.
+
+141
+00:06:31,950 --> 00:06:34,750
+With the initiative of replacing the existing Gregorian
+
+142
+00:06:34,750 --> 00:06:37,250
+calendar with a new one.
+
+143
+00:06:37,870 --> 00:06:40,310
+To the modern Gregorian calendar there are a
+
+144
+00:06:40,310 --> 00:06:41,350
+number of serious claims.
+
+145
+00:06:41,890 --> 00:06:43,850
+Not the same duration of months.
+
+146
+00:06:44,270 --> 00:06:45,970
+Inequality of six months and quarters.
+
+147
+00:06:46,510 --> 00:06:48,950
+Disagreement of numbers of days of the month
+
+148
+00:06:48,950 --> 00:06:50,030
+with days of the week.
+
+149
+00:06:50,490 --> 00:06:53,490
+And besides, the advent of each new year
+
+150
+00:06:53,490 --> 00:06:55,990
+begins on another day of the week.
+
+151
+00:06:55,990 --> 00:06:58,950
+All these shortcomings make it difficult for the
+
+152
+00:06:58,950 --> 00:07:01,210
+planning and financial bodies to work.
+
+153
+00:07:01,330 --> 00:07:02,630
+There are a lot of modern projects of
+
+154
+00:07:02,630 --> 00:07:05,690
+the new universal calendar presented at the UN.
+
+155
+00:07:06,870 --> 00:07:08,770
+But it turns out that they are all
+
+156
+00:07:08,770 --> 00:07:11,650
+based on the calendar developed by the French
+
+157
+00:07:11,650 --> 00:07:15,950
+astronomer Armelin back in 1888.
+
+158
+00:07:16,690 --> 00:07:19,250
+But then they abandoned the idea for religious
+
+159
+00:07:19,250 --> 00:07:19,970
+reasons.
+
+160
+00:07:19,970 --> 00:07:27,610
+This universal calendar is designed for the simple
+
+161
+00:07:27,610 --> 00:07:29,170
+work of the financial services.
+
+162
+00:07:29,470 --> 00:07:32,850
+If the calendar of Gustav Armelin is introduced,
+
+163
+00:07:33,290 --> 00:07:35,290
+we will live according to the following system.
+
+164
+00:07:36,070 --> 00:07:38,570
+In one year there will be 12 months,
+
+165
+00:07:38,850 --> 00:07:39,690
+4 quarters.
+
+166
+00:07:40,230 --> 00:07:43,110
+And a day a year 364.
+
+167
+00:07:43,530 --> 00:07:45,670
+Every year will start on Sunday.
+
+168
+00:07:46,330 --> 00:07:48,310
+Every quarter ends on Saturday.
+
+169
+00:07:48,310 --> 00:07:50,390
+In such a calendar, the New Year will
+
+170
+00:07:50,390 --> 00:07:52,170
+always fall on Sunday.
+
+171
+00:07:52,810 --> 00:07:56,270
+And December 31 in the universal calendar will
+
+172
+00:07:56,270 --> 00:07:57,170
+disappear altogether.
+
+173
+00:07:57,830 --> 00:07:59,510
+The last day of the year will be
+
+174
+00:07:59,510 --> 00:08:00,070
+December 30.
+
+175
+00:08:01,030 --> 00:08:04,390
+And instead of December 31, a day off
+
+176
+00:08:04,390 --> 00:08:05,570
+will be added without a number.
+
+177
+00:08:05,910 --> 00:08:08,810
+World Day, which compensates for the difference in
+
+178
+00:08:08,810 --> 00:08:11,690
+one day between the universal year and the
+
+179
+00:08:11,690 --> 00:08:11,910
+solar.
+
+180
+00:08:12,330 --> 00:08:13,790
+And will not be taken into account.
